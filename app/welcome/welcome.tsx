@@ -22,7 +22,17 @@ export function Welcome() {
           </div>
         </header>
         <h1>Categories</h1>
-        <Link to="/category">Category</Link>
+
+        <ul>
+          {categories.map((categoryName) => (
+            <li>
+              <Link to={`/category/${categoryName.toLowerCase()}`}>
+                {categoryName}
+              </Link>
+            </li>
+          ))}
+        </ul>
+
         <div className="max-w-[300px] w-full space-y-6 px-4">
           <nav className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 space-y-4">
             <p className="leading-6 text-gray-700 dark:text-gray-200 text-center">
@@ -49,6 +59,8 @@ export function Welcome() {
     </main>
   );
 }
+
+const categories = ["Pre Trip", "Supplies", "Travel", "On-Site"];
 
 const resources = [
   {
