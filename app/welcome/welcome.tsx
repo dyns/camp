@@ -5,13 +5,19 @@ import { Link } from "react-router";
 import { TaskItem } from "../components/task";
 import { Modal, useModal } from "../components/modal";
 
-export function Welcome() {
-  const { categories, addTaskToCategory, updateTask } = useCategories();
-
-  const { modalRef, setShowModal, showModal } = useModal();
-
-  const maxGlanceTaskLength = 3;
-
+function AddTaskModal({
+  addTaskToCategory,
+  modalRef,
+  showModal,
+  setShowModal,
+}: {
+  addTaskToCategory: (categoryId: string, taskText: string) => void;
+  modalRef: RefObject<HTMLDialogElement | null>;
+  showModal: { show: boolean; data: string | null };
+  setShowModal: Dispatch<
+    SetStateAction<{ show: boolean; data: string | null }>
+  >;
+}) {
   const [todoText, setTodoText] = useState("test");
 
   useEffect(() => {
@@ -21,55 +27,66 @@ export function Welcome() {
   }, [showModal]);
 
   return (
-    <main className="flex items-center justify-center pt-16 pb-4">
-      <Modal
-        ref={modalRef}
-        dialogHTMLID="add-task-modal"
-        // showModal={showModal}
-        // setShowModal={setShowModal}
-        // addTaskToCategory={addTaskToCategory}
-      >
-        <h3 className="font-bold text-lg">Add a task</h3>
-        <p className="py-4">
-          <input
-            type="text"
-            placeholder="what else?"
-            className="input"
-            value={todoText}
-            onChange={(event) => {
-              setTodoText(event.target.value);
-            }}
-          />
-        </p>
-        <div className="modal-action">
-          <button
-            className="btn btn-outline btn-secondary"
-            onClick={() => {
-              setShowModal({ show: false, data: null });
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            className="btn btn-soft btn-primary ml-4"
-            onClick={() => {
-              // add new todo
-              const trimmed = todoText.trim();
-              setTodoText(trimmed);
+    <Modal ref={modalRef} dialogHTMLID="add-task-modal">
+      <h3 className="font-bold text-lg">Add a task</h3>
+      <p className="py-4">
+        <input
+          type="text"
+          placeholder="what else?"
+          className="input"
+          value={todoText}
+          onChange={(event) => {
+            setTodoText(event.target.value);
+          }}
+        />
+      </p>
+      <div className="modal-action">
+        <button
+          className="btn btn-outline btn-secondary"
+          onClick={() => {
+            setShowModal({ show: false, data: null });
+          }}
+        >
+          Cancel
+        </button>
+        <button
+          className="btn btn-soft btn-primary ml-4"
+          onClick={() => {
+            // add new todo
+            const trimmed = todoText.trim();
+            setTodoText(trimmed);
 
-              if (trimmed) {
-                addTaskToCategory(showModal.data as string, todoText);
-                setShowModal({ show: false, data: null });
-              }
-            }}
-          >
-            Primary
-          </button>
-        </div>
-      </Modal>
+            if (trimmed) {
+              addTaskToCategory(showModal.data as string, todoText);
+              setShowModal({ show: false, data: null });
+            }
+          }}
+        >
+          Add Task
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
+export function Welcome() {
+  const { categories, addTaskToCategory, updateTask } = useCategories();
+
+  const { modalRef, setShowModal, showModal } = useModal<string>();
+
+  const maxGlanceTaskLength = 3;
+
+  return (
+    <main className="flex items-center justify-center pt-16 pb-4">
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0 bg-white">
         <h1>Let's go outside 🏔️</h1>
         <h2>At a glance:</h2>
+        <AddTaskModal
+          addTaskToCategory={addTaskToCategory}
+          modalRef={modalRef}
+          showModal={showModal}
+          setShowModal={setShowModal}
+        />
         <ul>
           {categories.map((category) => {
             const categoryCompleted = category.tasks.reduce(
