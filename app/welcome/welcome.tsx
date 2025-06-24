@@ -69,10 +69,94 @@ function AddTaskModal({
   );
 }
 
+function EditTaskModal({
+  modalRef,
+  showModal,
+  setShowModal,
+}: {
+  modalRef: RefObject<HTMLDialogElement | null>;
+  showModal: { show: boolean; data: string | null };
+  setShowModal: Dispatch<
+    SetStateAction<{ show: boolean; data: string | null }>
+  >;
+}) {
+  const [editText, setEditText] = useState("");
+  const [isComplete, setIsComplete] = useState(false);
+  const isEmpty = editText.trim() === "";
+
+  // Find the current task's completion status when modal opens
+  useEffect(() => {
+    if (showModal.show && typeof showModal.data === "string") {
+      setEditText(showModal.data);
+      setIsComplete(false);
+    }
+  }, [showModal]);
+
+  function handleUpdate() {
+    if (isEmpty) return;
+    setShowModal({ show: false, data: null });
+  }
+
+  return (
+    <Modal ref={modalRef} dialogHTMLID="edit-task-modal">
+      <h3 className="font-bold text-lg">Edit Task</h3>
+      <p className="py-4 flex items-center gap-4">
+        <input
+          type="checkbox"
+          className="checkbox checkbox-primary"
+          checked={isComplete}
+          onChange={() => setIsComplete((v) => !v)}
+        />
+        <input
+          type="text"
+          placeholder="What's next?"
+          className={`input w-full ${
+            isEmpty ? "input-error border-red-500" : ""
+          }`}
+          value={editText}
+          onChange={(e) => {
+            setEditText(e.target.value);
+          }}
+        />
+      </p>
+      <div className="modal-action flex items-center">
+        {isEmpty && (
+          <span className="text-error mr-4 whitespace-nowrap">
+            Task must have some text
+          </span>
+        )}
+        <button
+          className="btn btn-outline btn-secondary"
+          onClick={() => setShowModal({ show: false, data: null })}
+        >
+          Cancel
+        </button>
+        <button
+          className="btn btn-soft btn-primary ml-4"
+          onClick={handleUpdate}
+          disabled={isEmpty}
+        >
+          Update
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
 export function Welcome() {
   const { categories, addTaskToCategory, updateTask } = useCategories();
 
-  const { modalRef, setShowModal, showModal } = useModal<string>();
+  const {
+    modalRef: addTaskModalRef,
+    setShowModal: setShowAddTaskModal,
+    showModal: showAddTaskModal,
+  } = useModal<string>();
+
+  const {
+    modalRef: editTaskModalRef,
+    setShowModal: setShowEditTaskModal,
+    showModal: showEditTaskModal,
+  } = useModal<string>();
 
   const maxGlanceTaskLength = 3;
 
@@ -83,9 +167,14 @@ export function Welcome() {
         <h2>At a glance:</h2>
         <AddTaskModal
           addTaskToCategory={addTaskToCategory}
-          modalRef={modalRef}
-          showModal={showModal}
-          setShowModal={setShowModal}
+          modalRef={addTaskModalRef}
+          showModal={showAddTaskModal}
+          setShowModal={setShowAddTaskModal}
+        />
+        <EditTaskModal
+          modalRef={editTaskModalRef}
+          showModal={showEditTaskModal}
+          setShowModal={setShowEditTaskModal}
         />
         <ul>
           {categories.map((category) => {
@@ -108,7 +197,7 @@ export function Welcome() {
                   <button
                     className="btn btn-outline ml-8"
                     onClick={() => {
-                      setShowModal({ show: true, data: category.name });
+                      setShowAddTaskModal({ show: true, data: category.name });
                       // addTaskToCategory(category.name);
                     }}
                   >
@@ -125,7 +214,9 @@ export function Welcome() {
                     >
                       <TaskItem
                         task={task}
-                        onClick={() => {}}
+                        onClick={() => {
+                          setShowEditTaskModal({ show: true, data: task.name });
+                        }}
                         onCheck={() => {
                           updateTask(task.name);
                         }}
