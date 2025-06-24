@@ -3,41 +3,70 @@ import type { RefObject, Dispatch, SetStateAction } from "react";
 
 import { Link } from "react-router";
 import { TaskItem } from "../components/task";
-import { Dialog, useDialog } from "../components/dialog";
+import { Modal, useModal } from "../components/modal";
 
 export function Welcome() {
   const { categories, addTaskToCategory, updateTask } = useCategories();
-  // const dialogRef = useRef<HTMLDialogElement>(null);
-  // const [showModal, setShowModal] = useState<string>("");
 
-  // useLayoutEffect(() => {
-  //   // document.getElementById("my_modal_1").showModal();
-
-  //   if (showModal) {
-  //     // modal should be open
-  //     if (!dialogRef.current?.open) {
-  //       dialogRef.current?.showModal();
-  //     }
-  //   } else {
-  //     // modal should be closed
-  //     if (!!dialogRef.current?.open) {
-  //       dialogRef.current?.close();
-  //     }
-  //   }
-  // }, [showModal]);
-  const { dialogRef, setShowModal, showModal } = useDialog();
+  const { modalRef, setShowModal, showModal } = useModal();
 
   const maxGlanceTaskLength = 3;
 
+  const [todoText, setTodoText] = useState("test");
+
+  useEffect(() => {
+    if (showModal) {
+      setTodoText("");
+    }
+  }, [showModal]);
+
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
-      <Dialog
-        ref={dialogRef}
+      <Modal
+        ref={modalRef}
         dialogHTMLID="add-task-modal"
-        showModal={showModal}
-        setShowModal={setShowModal}
-        addTaskToCategory={addTaskToCategory}
-      />
+        // showModal={showModal}
+        // setShowModal={setShowModal}
+        // addTaskToCategory={addTaskToCategory}
+      >
+        <h3 className="font-bold text-lg">Add a task</h3>
+        <p className="py-4">
+          <input
+            type="text"
+            placeholder="what else?"
+            className="input"
+            value={todoText}
+            onChange={(event) => {
+              setTodoText(event.target.value);
+            }}
+          />
+        </p>
+        <div className="modal-action">
+          <button
+            className="btn btn-outline btn-secondary"
+            onClick={() => {
+              setShowModal({ show: false, data: null });
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            className="btn btn-soft btn-primary ml-4"
+            onClick={() => {
+              // add new todo
+              const trimmed = todoText.trim();
+              setTodoText(trimmed);
+
+              if (trimmed) {
+                addTaskToCategory(showModal.data as string, todoText);
+                setShowModal({ show: false, data: null });
+              }
+            }}
+          >
+            Primary
+          </button>
+        </div>
+      </Modal>
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0 bg-white">
         <h1>Let's go outside 🏔️</h1>
         <h2>At a glance:</h2>
@@ -62,7 +91,7 @@ export function Welcome() {
                   <button
                     className="btn btn-outline ml-8"
                     onClick={() => {
-                      setShowModal(category.name);
+                      setShowModal({ show: true, data: category.name });
                       // addTaskToCategory(category.name);
                     }}
                   >

@@ -1,49 +1,56 @@
-import type { RefObject, Dispatch, SetStateAction } from "react";
+import type { RefObject, Dispatch, SetStateAction, JSX } from "react";
 import { useState, useLayoutEffect, useRef, useEffect } from "react";
 
-export function useDialog() {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const [showModal, setShowModal] = useState<string>("");
+type ModalData<T> = { show: boolean; data: null | T };
+
+export function useModal<T>() {
+  const modalRef = useRef<HTMLDialogElement>(null);
+  const [showModal, setShowModal] = useState<ModalData<T>>({
+    show: false,
+    data: null,
+  });
 
   useLayoutEffect(() => {
     // document.getElementById("my_modal_1").showModal();
 
-    if (showModal) {
+    if (showModal.show) {
       // modal should be open
-      if (!dialogRef.current?.open) {
-        dialogRef.current?.showModal();
+      if (!modalRef.current?.open) {
+        modalRef.current?.showModal();
       }
     } else {
       // modal should be closed
-      if (!!dialogRef.current?.open) {
-        dialogRef.current?.close();
+      if (!!modalRef.current?.open) {
+        modalRef.current?.close();
       }
     }
-  }, [showModal]);
+  }, [showModal.show]);
 
-  return { dialogRef, setShowModal, showModal };
+  return { modalRef, setShowModal, showModal };
 }
 
-export function Dialog({
+export function Modal({
   ref,
   dialogHTMLID,
-  setShowModal,
-  showModal,
-  addTaskToCategory,
-}: {
+  children,
+}: // setShowModal,
+// showModal,
+// addTaskToCategory,
+{
   ref: RefObject<HTMLDialogElement | null>;
   dialogHTMLID: string;
-  setShowModal: Dispatch<SetStateAction<string>>;
-  showModal: string;
-  addTaskToCategory: (categoryId: string, task: string) => void;
+  children: React.ReactNode;
+  // setShowModal: Dispatch<SetStateAction<ModalData<T>>>;
+  // showModal: ModalData<T>;
+  // addTaskToCategory: (categoryId: string, task: string) => void;
 }) {
-  const [todoText, setTodoText] = useState("test");
+  // const [todoText, setTodoText] = useState("test");
 
-  useEffect(() => {
-    if (showModal) {
-      setTodoText("");
-    }
-  }, [showModal]);
+  // useEffect(() => {
+  //   if (showModal) {
+  //     setTodoText("");
+  //   }
+  // }, [showModal]);
 
   useLayoutEffect(() => {
     const removeEscapeListener = (event: any) => {
@@ -54,12 +61,13 @@ export function Dialog({
     return () => {
       ref.current?.removeEventListener("cancel", removeEscapeListener);
     };
-  }, [setTodoText]);
+  }, []);
 
   return (
     <dialog id={dialogHTMLID} className="modal" ref={ref}>
       <div className="modal-box">
-        <h3 className="font-bold text-lg">Add a task</h3>
+        {children}
+        {/* <h3 className="font-bold text-lg">Add a task</h3>
         <p className="py-4">
           <input
             type="text"
@@ -75,7 +83,7 @@ export function Dialog({
           <button
             className="btn btn-outline btn-secondary"
             onClick={() => {
-              setShowModal("");
+              setShowModal({ show: false, data: null });
             }}
           >
             Cancel
@@ -88,14 +96,14 @@ export function Dialog({
               setTodoText(trimmed);
 
               if (trimmed) {
-                addTaskToCategory(showModal, todoText);
-                setShowModal("");
+                addTaskToCategory(showModal.data as string, todoText);
+                setShowModal({ show: false, data: null });
               }
             }}
           >
             Primary
           </button>
-        </div>
+        </div> */}
       </div>
     </dialog>
   );
