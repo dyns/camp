@@ -82,15 +82,35 @@ function EditTaskModal({
 }) {
   const [editText, setEditText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
+  const [showDeleteTooltip, setShowDeleteTooltip] = useState(false);
   const isEmpty = editText.trim() === "";
 
-  // Find the current task's completion status when modal opens
   useEffect(() => {
     if (showModal.show && typeof showModal.data === "string") {
       setEditText(showModal.data);
       setIsComplete(false);
+      setShowDeleteTooltip(false);
     }
   }, [showModal]);
+
+  // Close tooltip when clicking outside
+  useEffect(() => {
+    if (!showDeleteTooltip) return;
+    function handleClick(e: MouseEvent) {
+      // Only close if click is outside the tooltip and not on the trash button
+      const tooltip = document.getElementById("delete-tooltip");
+      const trashBtn = document.getElementById("trash-btn");
+      if (tooltip && !tooltip.contains(e.target as Node)) {
+        setShowDeleteTooltip(false);
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+    }
+    document.addEventListener("mousedown", handleClick, { capture: true });
+    return () =>
+      document.removeEventListener("mousedown", handleClick, { capture: true });
+  }, [showDeleteTooltip]);
 
   function handleUpdate() {
     if (isEmpty) return;
@@ -99,45 +119,81 @@ function EditTaskModal({
 
   return (
     <Modal ref={modalRef} dialogHTMLID="edit-task-modal">
-      <h3 className="font-bold text-lg">Edit Task</h3>
-      <p className="py-4 flex items-center gap-4">
-        <input
-          type="checkbox"
-          className="checkbox checkbox-primary"
-          checked={isComplete}
-          onChange={() => setIsComplete((v) => !v)}
-        />
-        <input
-          type="text"
-          placeholder="What's next?"
-          className={`input w-full ${
-            isEmpty ? "input-error border-red-500" : ""
-          }`}
-          value={editText}
-          onChange={(e) => {
-            setEditText(e.target.value);
-          }}
-        />
-      </p>
-      <div className="modal-action flex items-center">
-        {isEmpty && (
-          <span className="text-error mr-4 whitespace-nowrap">
-            Task must have some text
-          </span>
-        )}
-        <button
-          className="btn btn-outline btn-secondary"
-          onClick={() => setShowModal({ show: false, data: null })}
-        >
-          Cancel
-        </button>
-        <button
-          className="btn btn-soft btn-primary ml-4"
-          onClick={handleUpdate}
-          disabled={isEmpty}
-        >
-          Update
-        </button>
+      <div className="relative">
+        <h3 className="font-bold text-lg">Edit Task</h3>
+        <p className="py-4 flex items-center gap-4">
+          <input
+            type="checkbox"
+            className="checkbox checkbox-primary"
+            checked={isComplete}
+            onChange={() => setIsComplete((v) => !v)}
+          />
+          <input
+            type="text"
+            placeholder="What's next?"
+            className={`input w-full ${
+              isEmpty ? "input-error border-red-500" : ""
+            }`}
+            value={editText}
+            onChange={(e) => {
+              setEditText(e.target.value);
+            }}
+          />
+        </p>
+        <div className="modal-action flex items-right">
+          <div style={{ flexGrow: 1 }}>
+            <button
+              disabled={showDeleteTooltip}
+              className="btn btn-ghost text-xl"
+              onClick={() => setShowDeleteTooltip((v) => !v)}
+              aria-label="Delete task"
+            >
+              🗑️
+            </button>
+            {showDeleteTooltip && (
+              <div
+                id="delete-tooltip"
+                className="absolute left-10 bottom-0 z-10 bg-base-100 p-4 rounded shadow flex flex-col items-start border border-base-200"
+              >
+                <span className="mb-2">Are you sure?</span>
+                <button
+                  className="btn btn-info text-white"
+                  onClick={() => {
+                    setShowDeleteTooltip(false);
+                  }}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  className="btn btn-error text-white"
+                  onClick={() => {
+                    setShowDeleteTooltip(false);
+                  }}
+                >
+                  Confirm
+                </button>
+              </div>
+            )}
+          </div>
+
+          {isEmpty && (
+            <span className="text-error mr-4">Task must have some text</span>
+          )}
+          <button
+            className="btn btn-outline btn-secondary"
+            onClick={() => setShowModal({ show: false, data: null })}
+          >
+            Cancel
+          </button>
+          <button
+            className="btn btn-soft btn-primary ml-4"
+            onClick={handleUpdate}
+            disabled={isEmpty}
+          >
+            Update
+          </button>
+        </div>
       </div>
     </Modal>
   );
