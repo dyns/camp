@@ -10,11 +10,21 @@ export function TaskItem({
   onClick: () => void;
 }) {
   return (
-    <>
-      <span className="bg-blue-300" onClick={onClick}>
+    <span className="flex gap-2 list-col-grow">
+      <span
+        className="hover:underline cursor-pointer"
+        style={{ flexGrow: 1 }}
+        onClick={onClick}
+      >
         {task.name}
       </span>
-      <input onChange={onCheck} type="checkbox" checked={task.complete} />
-    </>
+      <input
+        className="checkbox checkbox-accent"
+        style={{ flexGrow: 0 }}
+        onChange={onCheck}
+        type="checkbox"
+        checked={task.complete}
+      />
+    </span>
   );
 }
