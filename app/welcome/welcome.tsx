@@ -232,7 +232,7 @@ export function Welcome() {
           showModal={showEditTaskModal}
           setShowModal={setShowEditTaskModal}
         />
-        <ul>
+        <ul style={{ width: "90%" }}>
           {categories.map((category) => {
             const categoryCompleted = category.tasks.reduce(
               (isAllComplete, task) => {
