@@ -249,6 +249,11 @@ export function Welcome() {
     <main className="flex items-center justify-center pt-16 pb-4">
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0 bg-white">
         <h1>Let's go outside 🏔️</h1>
+
+        <Link className="btn btn-soft" to="/account-settings">
+          update user preferences
+        </Link>
+
         <h2>At a glance:</h2>
         <AddTaskModal
           addTaskToCategory={addTaskToCategory}
