@@ -249,6 +249,9 @@ export function Welcome() {
     <main className="flex flex-col min-h-screen bg-base-200">
       {/* Top bar with user preferences icon */}
       <div className="flex items-center justify-end px-8 py-4 bg-white shadow-sm">
+        <Link to="/trips" className="btn btn-primary btn-sm ml-4">
+          View all Trips
+        </Link>
         <Link
           to="/account-settings"
           className="btn btn-circle btn-ghost text-2xl text-primary hover:bg-base-100"
@@ -274,7 +277,15 @@ export function Welcome() {
       <div className="flex-1 flex flex-col items-center gap-10 min-h-0 bg-base-200 px-4 pb-8">
         <h1 className="text-3xl font-bold mt-8 mb-2">Let's go outside 🏔️</h1>
         <div className="flex items-center justify-between w-full max-w-2xl mb-2">
-          <h2 className="text-xl font-semibold">At a glance:</h2>
+          <h2 className="text-xl font-semibold">
+            Put Project Name here (at a glance):
+          </h2>
+          <Link to="/trip-settings" className="btn btn-primary btn-sm ml-4">
+            Trip Preferences
+          </Link>
+        </div>
+        <div className="flex items-center justify-between w-full max-w-2xl mb-2">
+          <h2 className="text-xl font-semibold">Categories:</h2>
           <Link to="/create-category" className="btn btn-primary btn-sm ml-4">
             New Category
           </Link>
