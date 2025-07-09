@@ -4,6 +4,7 @@ import type { RefObject, Dispatch, SetStateAction } from "react";
 import { Link } from "react-router";
 import { TaskItem } from "../components/task";
 import { Modal, useModal } from "../components/modal";
+import type { Task, Category } from "~/types";
 
 function AddTaskModal({
   addTaskToCategory,
@@ -73,12 +74,14 @@ function EditTaskModal({
   modalRef,
   showModal,
   setShowModal,
+  updateTask,
+  deleteTask,
 }: {
   modalRef: RefObject<HTMLDialogElement | null>;
-  showModal: { show: boolean; data: string | null };
-  setShowModal: Dispatch<
-    SetStateAction<{ show: boolean; data: string | null }>
-  >;
+  showModal: { show: boolean; data: Task | null };
+  setShowModal: Dispatch<SetStateAction<{ show: boolean; data: Task | null }>>;
+  updateTask: (task: Task) => void;
+  deleteTask: (taskId: string) => void;
 }) {
   const [editText, setEditText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
@@ -86,11 +89,18 @@ function EditTaskModal({
   const isEmpty = editText.trim() === "";
 
   useEffect(() => {
-    if (showModal.show && typeof showModal.data === "string") {
-      setEditText(showModal.data);
-      setIsComplete(false);
+    if (showModal.show && showModal.data) {
+      setEditText(showModal.data.name);
+      setIsComplete(showModal.data.complete);
       setShowDeleteTooltip(false);
     }
+    return () => {
+      if (!showModal.show || !showModal.data) {
+        setEditText("");
+        setIsComplete(false);
+        setShowDeleteTooltip(false);
+      }
+    };
   }, [showModal]);
 
   // Close tooltip when clicking outside
@@ -114,6 +124,15 @@ function EditTaskModal({
 
   function handleUpdate() {
     if (isEmpty) return;
+    console.log("api edit task", { editText, isComplete });
+
+    if (showModal.data) {
+      updateTask({
+        id: showModal.data.id,
+        name: editText,
+        complete: isComplete,
+      });
+    }
     setShowModal({ show: false, data: null });
   }
 
@@ -168,7 +187,11 @@ function EditTaskModal({
                 <button
                   className="btn btn-error text-white"
                   onClick={() => {
+                    if (showModal.data) {
+                      deleteTask(showModal.data?.id);
+                    }
                     setShowDeleteTooltip(false);
+                    setShowModal({ show: false, data: null });
                   }}
                 >
                   Confirm
@@ -200,7 +223,13 @@ function EditTaskModal({
 }
 
 export function Welcome() {
-  const { categories, addTaskToCategory, updateTask } = useCategories();
+  const {
+    categories,
+    addTaskToCategory,
+    toggleTaskCompletion,
+    updateTask,
+    deleteTask,
+  } = useCategories();
 
   const {
     modalRef: addTaskModalRef,
@@ -212,7 +241,7 @@ export function Welcome() {
     modalRef: editTaskModalRef,
     setShowModal: setShowEditTaskModal,
     showModal: showEditTaskModal,
-  } = useModal<string>();
+  } = useModal<Task>();
 
   const maxGlanceTaskLength = 3;
 
@@ -231,6 +260,8 @@ export function Welcome() {
           modalRef={editTaskModalRef}
           showModal={showEditTaskModal}
           setShowModal={setShowEditTaskModal}
+          updateTask={updateTask}
+          deleteTask={deleteTask}
         />
         <ul style={{ width: "90%" }}>
           {categories.map((category) => {
@@ -271,10 +302,10 @@ export function Welcome() {
                       <TaskItem
                         task={task}
                         onClick={() => {
-                          setShowEditTaskModal({ show: true, data: task.name });
+                          setShowEditTaskModal({ show: true, data: task });
                         }}
                         onCheck={() => {
-                          updateTask(task.name);
+                          toggleTaskCompletion(task.id, !task.complete);
                         }}
                       />
                     </li>
@@ -298,32 +329,43 @@ export function Welcome() {
 }
 
 export function useCategories() {
-  const defaultCategories = [
+  const defaultCategories: Category[] = [
     {
+      id: crypto.randomUUID(),
       name: "Pre Trip",
       tasks: [
-        { name: "Pick location", complete: true },
-        { name: "Settle on date", complete: false },
+        { name: "Pick location", complete: true, id: crypto.randomUUID() },
+        { name: "Settle on date", complete: false, id: crypto.randomUUID() },
       ],
     },
     {
+      id: crypto.randomUUID(),
       name: "Supplies",
       tasks: [
-        { name: "firewood", complete: false },
-        { name: "large water jugs", complete: false },
-        { name: "smores", complete: false },
-        { name: "hot dog sticks", complete: false },
+        { name: "firewood", complete: false, id: crypto.randomUUID() },
+        { name: "large water jugs", complete: false, id: crypto.randomUUID() },
+        { name: "smores", complete: false, id: crypto.randomUUID() },
+        { name: "hot dog sticks", complete: false, id: crypto.randomUUID() },
       ],
     },
     {
       name: "Travel",
-      tasks: [{ name: "figure out carpooling", complete: false }],
+      id: crypto.randomUUID(),
+      tasks: [
+        {
+          name: "figure out carpooling",
+          complete: false,
+          id: crypto.randomUUID(),
+        },
+      ],
     },
     {
       name: "On-Site",
+      id: crypto.randomUUID(),
+
       tasks: [
-        { name: "hike 10 miles", complete: false },
-        { name: "tip a cow", complete: false },
+        { name: "hike 10 miles", complete: false, id: crypto.randomUUID() },
+        { name: "tip a cow", complete: false, id: crypto.randomUUID() },
       ],
     },
   ];
@@ -343,13 +385,14 @@ export function useCategories() {
     });
   });
 
-  function updateTask(taskId: string) {
+  function toggleTaskCompletion(taskId: string, completed: boolean) {
+    console.log("toggleTaskCompletion api", { taskId, completed });
     setState((oldState) =>
       oldState.map((category) => {
         return {
           ...category,
           tasks: category.tasks.map((task) => {
-            if (task.name === taskId) {
+            if (task.id === taskId) {
               return { ...task, complete: !task.complete };
             }
             return { ...task };
@@ -360,15 +403,16 @@ export function useCategories() {
   }
 
   function addTaskToCategory(categoryId: string, taskText: string) {
-    console.log("addTaskToCategory called");
+    console.log("addTaskToCategory api", { categoryId, taskText });
     setState((oldState) => {
-      console.log("set state called", JSON.parse(JSON.stringify(oldState)));
       return oldState.map((a) => {
         if (a.name === categoryId) {
-          console.log("if statement called");
           return {
             ...a,
-            tasks: [{ name: taskText, complete: false }, ...a.tasks],
+            tasks: [
+              { name: taskText, complete: false, id: crypto.randomUUID() },
+              ...a.tasks,
+            ],
           };
         }
         return { ...a, tasks: [...a.tasks] };
@@ -376,10 +420,45 @@ export function useCategories() {
     });
   }
 
+  function updateTask(updateTask: Task) {
+    console.log("update task api", updateTask);
+
+    setState((oldState) =>
+      oldState.map((category) => {
+        return {
+          ...category,
+          tasks: category.tasks.map((task) => {
+            if (task.id === updateTask.id) {
+              return {
+                ...updateTask,
+              };
+            }
+            return { ...task };
+          }),
+        };
+      })
+    );
+  }
+
+  function deleteTask(taskId: string) {
+    setState((oldState) =>
+      oldState.map((category) => {
+        return {
+          ...category,
+          tasks: category.tasks.filter((task) => {
+            return task.id != taskId;
+          }),
+        };
+      })
+    );
+  }
+
   return {
     categories: state,
     setCategories: setState,
     addTaskToCategory,
+    toggleTaskCompletion,
     updateTask,
+    deleteTask,
   };
 }
