@@ -246,15 +246,39 @@ export function Welcome() {
   const maxGlanceTaskLength = 3;
 
   return (
-    <main className="flex items-center justify-center pt-16 pb-4">
-      <div className="flex-1 flex flex-col items-center gap-16 min-h-0 bg-white">
-        <h1>Let's go outside 🏔️</h1>
-
-        <Link className="btn btn-soft" to="/account-settings">
-          update user preferences
+    <main className="flex flex-col min-h-screen bg-base-200">
+      {/* Top bar with user preferences icon */}
+      <div className="flex items-center justify-end px-8 py-4 bg-white shadow-sm">
+        <Link
+          to="/account-settings"
+          className="btn btn-circle btn-ghost text-2xl text-primary hover:bg-base-100"
+          title="Update user preferences"
+        >
+          {/* Head silhouette icon (Heroicons user icon) */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-7 h-7"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25v-1.5A2.25 2.25 0 016.75 16.5h10.5a2.25 2.25 0 012.25 2.25v1.5"
+            />
+          </svg>
         </Link>
-
-        <h2>At a glance:</h2>
+      </div>
+      <div className="flex-1 flex flex-col items-center gap-10 min-h-0 bg-base-200 px-4 pb-8">
+        <h1 className="text-3xl font-bold mt-8 mb-2">Let's go outside 🏔️</h1>
+        <div className="flex items-center justify-between w-full max-w-2xl mb-2">
+          <h2 className="text-xl font-semibold">At a glance:</h2>
+          <Link to="/create-category" className="btn btn-primary btn-sm ml-4">
+            New Category
+          </Link>
+        </div>
         <AddTaskModal
           addTaskToCategory={addTaskToCategory}
           modalRef={addTaskModalRef}
@@ -268,7 +292,7 @@ export function Welcome() {
           updateTask={updateTask}
           deleteTask={deleteTask}
         />
-        <ul style={{ width: "90%" }}>
+        <ul className="w-full max-w-2xl space-y-8">
           {categories.map((category) => {
             const categoryCompleted = category.tasks.reduce(
               (isAllComplete, task) => {
@@ -278,30 +302,34 @@ export function Welcome() {
             );
 
             return (
-              <li key={category.name}>
-                <div className="mb-2 mt-2">
+              <li key={category.name} className="mb-2">
+                <div className="flex items-center mb-2 mt-2">
                   <Link
-                    className={categoryCompleted ? "line-through" : ""}
+                    className={
+                      "text-lg font-semibold transition-all duration-150 " +
+                      (categoryCompleted
+                        ? "line-through text-gray-400"
+                        : "text-primary")
+                    }
                     to={`/category/${category.name.toLowerCase()}`}
                   >
                     {category.name}
                   </Link>
                   <button
-                    className="btn btn-outline ml-8"
+                    className="btn btn-outline btn-sm ml-6"
                     onClick={() => {
                       setShowAddTaskModal({ show: true, data: category.name });
-                      // addTaskToCategory(category.name);
                     }}
                   >
                     +
                   </button>
                 </div>
-                <ul className="list bg-base-100 rounded-box shadow-md">
+                <ul className="list bg-base-100 rounded-box shadow-md divide-y divide-base-200">
                   {category.tasks.slice(0, maxGlanceTaskLength).map((task) => (
                     <li
                       key={task.name}
-                      className={`${"list-row"} ${
-                        task.complete ? "line-through" : ""
+                      className={`list-row px-4 py-2 flex items-center ${
+                        task.complete ? "line-through text-gray-400" : ""
                       }`}
                     >
                       <TaskItem
@@ -316,7 +344,7 @@ export function Welcome() {
                     </li>
                   ))}
                   {category.tasks.length > maxGlanceTaskLength ? (
-                    <li className="list-row">
+                    <li className="list-row px-4 py-2 text-sm text-gray-500">
                       View {category.tasks.length - maxGlanceTaskLength} more
                       items in this category
                     </li>
@@ -326,8 +354,7 @@ export function Welcome() {
             );
           })}
         </ul>
-
-        <h1>Food Itinarary</h1>
+        <h1 className="text-2xl font-bold mt-12">Food Itinerary</h1>
       </div>
     </main>
   );
