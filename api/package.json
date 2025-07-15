@@ -1,0 +1,15 @@
+{
+  "name": "camp-api",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node server"
+  },
+  "dependencies": {
+    "fastify": "^5.4.0"
+  }
+}
