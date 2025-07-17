@@ -1,5 +1,10 @@
 // Import the framework and instantiate it
 import Fastify from "fastify";
+
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
 const fastify = Fastify({
   logger: true,
 });
@@ -7,6 +12,12 @@ const fastify = Fastify({
 // Declare a route
 fastify.get("/", async function handler(request, reply) {
   return { hello: "world update" };
+});
+
+// Declare a route
+fastify.get("/users", async function handler(request, reply) {
+  return await prisma.user.findMany();
+  // return "these are the users";
 });
 
 // Run the server!
