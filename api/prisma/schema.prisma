@@ -5,8 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
+  provider      = "prisma-client-js"
+  output        = "../node_modules/.prisma/client"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
@@ -15,11 +15,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 // schema
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String
+  id           Int    @id @default(autoincrement())
+  email        String @unique
+  name         String
+  OwnedTrips   Trip[] @relation("TripOwners")
+  InvitedTrips Trip[] @relation("InvitedTrips")
+  tasks        Task[]
+}
+
+model Trip {
+  id          Int                @id @default(autoincrement())
+  name        String
+  description String?
+  startDate   DateTime
+  owners      User[]             @relation("TripOwners")
+  guests      User[]             @relation("InvitedTrips")
+  category    TripTaskCategory[]
+}
+
+model TripTaskCategory {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  trip        Trip    @relation(fields: [tripId], references: [id])
+  tripId      Int
+  tasks       Task[]
+}
+
+model Task {
+  id           Int              @id @default(autoincrement())
+  name         String
+  description  String?
+  completed    Boolean          @default(false)
+  category     TripTaskCategory @relation(fields: [categoryId], references: [id])
+  categoryId   Int
+  assignedTo   User?            @relation(fields: [assignedToId], references: [id])
+  assignedToId Int?
 }
