@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider      = "prisma-client-js"
   output        = "../node_modules/.prisma/client"
@@ -15,16 +9,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// schema
-
 model User {
-  id           Int    @id @default(autoincrement())
-  email        String @unique
-  name         String
+  id              Int     @id @default(autoincrement())
+  email           String  @unique
+  name            String
   profileImageUrl String?
-  OwnedTrips   Trip[] @relation("TripOwners")
-  InvitedTrips Trip[] @relation("InvitedTrips")
-  tasks        Task[]
+  tasks           Task[]
+  InvitedTrips    Trip[]  @relation("InvitedTrips")
+  OwnedTrips      Trip[]  @relation("TripOwners")
+  password        String
 }
 
 model Trip {
@@ -32,18 +25,18 @@ model Trip {
   name        String
   description String?
   startDate   DateTime
-  owners      User[]             @relation("TripOwners")
+  categories  TripTaskCategory[]
   guests      User[]             @relation("InvitedTrips")
-  category    TripTaskCategory[]
+  owners      User[]             @relation("TripOwners")
 }
 
 model TripTaskCategory {
   id          Int     @id @default(autoincrement())
   name        String
   description String?
-  trip        Trip    @relation(fields: [tripId], references: [id])
   tripId      Int
   tasks       Task[]
+  trip        Trip    @relation(fields: [tripId], references: [id])
 }
 
 model Task {
@@ -51,8 +44,8 @@ model Task {
   name         String
   description  String?
   completed    Boolean          @default(false)
-  category     TripTaskCategory @relation(fields: [categoryId], references: [id])
   categoryId   Int
-  assignedTo   User?            @relation(fields: [assignedToId], references: [id])
   assignedToId Int?
+  assignedTo   User?            @relation(fields: [assignedToId], references: [id])
+  category     TripTaskCategory @relation(fields: [categoryId], references: [id])
 }
