@@ -7,3 +7,5 @@
 /.env
 
 /uploads
+
+test.http

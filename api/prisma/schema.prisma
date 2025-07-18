@@ -21,6 +21,7 @@ model User {
   id           Int    @id @default(autoincrement())
   email        String @unique
   name         String
+  profileImageUrl String?
   OwnedTrips   Trip[] @relation("TripOwners")
   InvitedTrips Trip[] @relation("InvitedTrips")
   tasks        Task[]
