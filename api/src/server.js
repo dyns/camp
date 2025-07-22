@@ -20,7 +20,7 @@ const prisma = new PrismaClient();
 
 const SESSION_COOKIE_NAME = "session";
 function createUserSessionCookie(userId) {
-  return jwt({ userId }, COOKIE_SECRET, { expiresIn: "1w" });
+  return jwt.sign({ userId }, COOKIE_SECRET, { expiresIn: "1w" });
 }
 
 const fastify = Fastify({
@@ -69,7 +69,7 @@ fastify.post("/auth/signup", async (request, reply) => {
   // const token = fastify.jwt.sign({ userId: user.id }, { expiresIn: "1w" });
   const session = createUserSessionCookie(user.id);
 
-  reply.setCookie("SESSION_COOKIE_NAME", session, {
+  reply.setCookie(SESSION_COOKIE_NAME, session, {
     httpOnly: true,
     sameSite: "strict",
     path: "/",
@@ -79,7 +79,7 @@ fastify.post("/auth/signup", async (request, reply) => {
 });
 
 async function authMiddleware(request, reply) {
-  console.log("authMiddleware called", JSON.stringify(request.headers));
+  console.log("\n\n authMiddleware called", JSON.stringify(request.headers));
   try {
     const sessionCookie = request.cookies[SESSION_COOKIE_NAME];
     console.log("authMiddleware sessionCookie", sessionCookie);
@@ -124,7 +124,7 @@ fastify.post("/auth/signin", async (request, reply) => {
 
   const session = createUserSessionCookie(user.id);
 
-  reply.setCookie("SESSION_COOKIE_NAME", session, {
+  reply.setCookie(SESSION_COOKIE_NAME, session, {
     httpOnly: true,
     sameSite: "strict",
     path: "/",
