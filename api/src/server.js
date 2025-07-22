@@ -9,7 +9,7 @@ import { pipeline } from "stream/promises";
 import { prisma } from "./lib/prisma.js";
 import { fastify } from "./lib/server.js";
 import { SESSION_COOKIE_NAME, COOKIE_SECRET } from "./lib/session.js";
-
+import { authMiddleware } from "./lib/middleware.js";
 import "./routes/index.js";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
@@ -24,35 +24,6 @@ fastify.register(fastifyCors, {
 fastify.register(import("@fastify/multipart"));
 
 fastify.register(import("@fastify/cookie"));
-
-async function authMiddleware(request, reply) {
-  console.log("\n\n authMiddleware called", JSON.stringify(request.headers));
-  try {
-    const sessionCookie = request.cookies[SESSION_COOKIE_NAME];
-    console.log("authMiddleware sessionCookie", sessionCookie);
-    if (!sessionCookie) {
-      return reply.status(401).send({ error: "Unauthorized" });
-    }
-
-    try {
-      const decoded = jwt.verify(sessionCookie, COOKIE_SECRET);
-      const userId = decoded.userId;
-      console.log("authMiddleware decoded", decoded);
-
-      // request.user = { id: userId };
-      // Find user
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-      });
-      request.user = user;
-    } catch {
-      return reply.status(401).send({ error: "Invalid token" });
-    }
-  } catch (error) {
-    console.error("Authentication error:", error);
-    return reply.status(401).send({ error: "Unauthorized" });
-  }
-}
 
 const staticPath = path.join(__dirname2, "uploads");
 console.log({ staticPath });
