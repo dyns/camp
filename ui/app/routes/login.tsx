@@ -1,128 +1,54 @@
 import { useState } from "react";
 
-import { redirect, NavLink } from "react-router";
-import { useCurrentUser, useMutateCurrentUser } from "../apiClient/client";
+import { redirect, NavLink, useNavigate } from "react-router";
+import { useMutateCurrentUser, getCurrentUser } from "../apiClient/client";
 
-function LoginStatus() {
-  const {
-    isPending,
-    error: qError,
-    data: qData,
-    status: qStatus,
-  } = useCurrentUser();
+const ACTIVE_USER_REDIRECT = "/trips";
 
-  // useQuery({
-  //   retry: false,
-  //   queryKey: ["repoData"],
-  //   queryFn: async () => {
-  //     const res = await fetch("http://localhost:3000/auth/me");
+export async function loader({ request }) {
+  const cookie = request.headers.get("cookie") ?? "";
+  try {
+    const currentUser = await getCurrentUser({}, { Cookie: cookie });
+    return redirect(ACTIVE_USER_REDIRECT);
+  } catch (error) {}
+}
 
-  //     const contentType = res.headers.get("Content-Type") || "";
-  //     const data = contentType.includes("application/json")
-  //       ? await res.json()
-  //       : await res.text();
-
-  //     if (!res.ok) {
-  //       const message =
-  //         typeof data === "string" ? data : data.error || "Unknown error";
-  //       console.error("Error fetching data:", message);
-  //       const error = new Error(message);
-  //       // error.status = res.status;
-  //       // error.data = data;
-  //       throw error;
-  //     }
-
-  //     return data;
-  //   },
-  // });
-
-  if (qError)
-    return (
-      "An error has occurred: " +
-      qError.message +
-      "status: " +
-      JSON.stringify(qStatus)
-    );
-
-  if (isPending) return "Loading...";
-
+export default function LogInPage() {
   return (
-    <div>
-      api data: {JSON.stringify(qData)} status: {JSON.stringify(status)}
+    <div className="flex items-center justify-center min-h-screen bg-base-200">
+      <LoginForm />
     </div>
   );
 }
 
-export default function LogInPage() {
-  const { isPending, error, data, status } = useCurrentUser();
-
-  console.log("LoginPage data", { isPending, error, data, status });
-
-  if (isPending) return "Loading...";
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-base-200">
-        <LoginForm />
-      </div>
-    );
-  }
-
-  return <div>got user</div>;
-}
-
 function LoginForm() {
+  let navigate = useNavigate();
+
   const { mutate, isPending, isError, isSuccess, isIdle, error } =
-    useMutateCurrentUser();
+    useMutateCurrentUser((data, error, variables, context) => {
+      if (!error) {
+        navigate(ACTIVE_USER_REDIRECT);
+      }
+    });
 
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("handleFormChange", e.target.name, e.target.value);
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log("handleSubmit", formData);
     e.preventDefault(); // Stop default form submission
     mutate({
       email: formData.email,
       password: formData.password,
     });
-
-    // try {
-    //   await apiClient('/auth/signin', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(form),
-    //   });
-    //   // maybe redirect or refetch auth status here
-    // } catch (err) {
-    //   console.error(err);
-    // }
   };
 
-  if (isPending) return "Loading...";
-
-  if (isError) {
-    return (
-      <div>
-        Error logging in :{" "}
-        {JSON.stringify({ isPending, isError, isSuccess, isIdle, error })}
-      </div>
-    );
-  }
-
-  return (
+  const loginForm = (
     <>
-      <form
-        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md space-y-6"
-        onSubmit={handleSubmit}
-      >
-        <h2 className="text-2xl font-bold text-center mb-4">
-          Sign In ... state:{" "}
-          {JSON.stringify({ isSuccess, isIdle, isError, isPending })}
-        </h2>
+      <form onSubmit={handleSubmit}>
+        <h2 className="text-2xl font-bold text-center mb-4">Sign In</h2>
         <div>
           <label className="block mb-1 font-semibold" htmlFor="email">
             Email
@@ -132,7 +58,7 @@ function LoginForm() {
             name="email"
             type="email"
             required
-            className="input input-bordered w-full"
+            className="input input-bordered w-full focus:invalid:border-red-500"
             placeholder="Enter your email"
             value={formData.email}
             onChange={handleFormChange}
@@ -166,6 +92,13 @@ function LoginForm() {
           Don't have an account? Sign Up
         </NavLink>
       </div>
+      {isError ? <div>Error logging in: {error.message}</div> : null}
     </>
+  );
+
+  return (
+    <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md space-y-6">
+      {isPending ? "Loading..." : loginForm}
+    </div>
   );
 }
