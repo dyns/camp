@@ -122,6 +122,10 @@ fastify.post("/auth/signin", async (request, reply) => {
   // Validate password
   const isPasswordValid = password === user.password;
 
+  if (!isPasswordValid) {
+    return reply.status(401).send({ error: "Invalid credentials" });
+  }
+
   const session = createUserSessionCookie(user.id);
 
   reply.setCookie(SESSION_COOKIE_NAME, session, {
