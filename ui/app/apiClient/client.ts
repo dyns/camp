@@ -17,7 +17,7 @@ export class APIError extends Error {
   }
 }
 
-async function apiRequest(path: string, options = {}) {
+async function apiRequest(path: string, options = {}, headers = {}) {
   const requestUrl = `${API_BASE_URL}${path}`;
 
   console.log("Making API request to:", requestUrl, "with options:", options);
@@ -26,6 +26,7 @@ async function apiRequest(path: string, options = {}) {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      ...headers,
     },
     ...options,
   });
@@ -48,7 +49,13 @@ async function apiRequest(path: string, options = {}) {
   return data;
 }
 
-export function useMutateCurrentUser() {
+export async function getCurrentUser(requestOptions = {}, headers = {}) {
+  return await apiRequest("/auth/me", requestOptions, headers);
+}
+
+export function useMutateCurrentUser(
+  onSettled: (data, error, variables, context) => void = () => {}
+) {
   return useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) => {
       return apiRequest("/auth/signin", {
@@ -64,6 +71,7 @@ export function useMutateCurrentUser() {
       console.log("User logged in successfully:", { data });
       queryClient.setQueryData(["auth", "user"], data.user);
     },
+    onSettled: onSettled,
     // onError: (err) => {
     //   console.error(err);
     // },
@@ -75,7 +83,7 @@ export function useCurrentUser() {
     retry: false,
     queryKey: ["auth", "user"],
     queryFn: async () => {
-      return await apiRequest("/auth/me");
+      return getCurrentUser();
     },
   });
 }
