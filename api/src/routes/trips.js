@@ -1,6 +1,35 @@
 import { prisma } from "../lib/prisma.js";
+import { authMiddleware } from "../lib/middleware.js";
 
 export default async function routes(fastify) {
+  fastify.addHook("preHandler", authMiddleware);
+
+  fastify.get("/", async function handler(req, resp) {
+    const trips = await prisma.trip.findMany({
+      where: {
+        OR: [
+          {
+            guests: {
+              some: {
+                id: req.user.id,
+              },
+            },
+          },
+          {
+            owners: {
+              some: {
+                id: req.user.id,
+              },
+            },
+          },
+        ],
+      },
+    });
+
+    console.log("trips prisma", JSON.stringify(trips));
+    return { trips };
+  });
+
   fastify.post("/", async function handler(req, reply) {
     // create trip model
     const trip = await prisma.trip.create({
@@ -9,7 +38,7 @@ export default async function routes(fastify) {
         description: "my description",
         startDate: new Date(),
         owners: {
-          connect: [{ id: 1 }],
+          connect: [{ id: req.user.id }],
         },
         categories: {
           create: [
