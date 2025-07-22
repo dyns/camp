@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import { redirect, NavLink, useNavigate } from "react-router";
 import { useMutateCurrentUser, getCurrentUser } from "../apiClient/client";
 
@@ -22,83 +21,112 @@ export default function LogInPage() {
 }
 
 function LoginForm() {
-  let navigate = useNavigate();
-
-  const { mutate, isPending, isError, isSuccess, isIdle, error } =
-    useMutateCurrentUser((data, error, variables, context) => {
+  const navigate = useNavigate();
+  const { mutate, isPending, isError, error } = useMutateCurrentUser(
+    (data, error) => {
       if (!error) {
         navigate(ACTIVE_USER_REDIRECT);
       }
-    });
-
+    }
+  );
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Stop default form submission
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     mutate({
       email: formData.email,
       password: formData.password,
     });
   };
 
-  const loginForm = (
-    <>
-      <form onSubmit={handleSubmit}>
-        <h2 className="text-2xl font-bold text-center mb-4">Sign In</h2>
-        <div>
-          <label className="block mb-1 font-semibold" htmlFor="email">
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            className="input input-bordered w-full focus:invalid:border-red-500"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={handleFormChange}
-          />
-        </div>
-        <div>
-          <label className="block mb-1 font-semibold" htmlFor="password">
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            className="input input-bordered w-full"
-            placeholder="Enter your password"
-            value={formData.password}
-            onChange={handleFormChange}
-          />
-        </div>
-        <button type="submit" className="btn btn-primary w-full mt-4">
-          Sign In
-        </button>
-      </form>
-      <div className="text-center mt-4">
-        <NavLink
-          type="button"
-          className="btn btn-link text-primary"
-          to="/create-account"
-        >
-          Don't have an account? Sign Up
-        </NavLink>
-      </div>
-      {isError ? <div>Error logging in: {error.message}</div> : null}
-    </>
-  );
-
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md space-y-6">
-      {isPending ? "Loading..." : loginForm}
+      {isPending ? (
+        "Loading..."
+      ) : (
+        <>
+          <LoginFormFields
+            formData={formData}
+            onChange={handleFormChange}
+            onSubmit={handleSubmit}
+          />
+          <LoginFormFooter />
+          {isError && (
+            <div className="text-red-500">
+              Error logging in: {error.message}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+type LoginFormFieldsProps = {
+  formData: { email: string; password: string };
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+};
+
+function LoginFormFields({
+  formData,
+  onChange,
+  onSubmit,
+}: LoginFormFieldsProps) {
+  return (
+    <form onSubmit={onSubmit}>
+      <h2 className="text-2xl font-bold text-center mb-4">Sign In</h2>
+      <div>
+        <label className="block mb-1 font-semibold" htmlFor="email">
+          Email
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          className="input input-bordered w-full focus:invalid:border-red-500"
+          placeholder="Enter your email"
+          value={formData.email}
+          onChange={onChange}
+        />
+      </div>
+      <div>
+        <label className="block mb-1 font-semibold" htmlFor="password">
+          Password
+        </label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
+          className="input input-bordered w-full"
+          placeholder="Enter your password"
+          value={formData.password}
+          onChange={onChange}
+        />
+      </div>
+      <button type="submit" className="btn btn-primary w-full mt-4">
+        Sign In
+      </button>
+    </form>
+  );
+}
+
+function LoginFormFooter() {
+  return (
+    <div className="text-center mt-4">
+      <NavLink
+        type="button"
+        className="btn btn-link text-primary"
+        to="/create-account"
+      >
+        Don't have an account? Sign Up
+      </NavLink>
     </div>
   );
 }
