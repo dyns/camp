@@ -20,8 +20,6 @@ export class APIError extends Error {
 async function apiRequest(path: string, options = {}, headers = {}) {
   const requestUrl = `${API_BASE_URL}${path}`;
 
-  console.log("Making API request to:", requestUrl, "with options:", options);
-
   const res = await fetch(requestUrl, {
     credentials: "include",
     headers: {
@@ -47,6 +45,10 @@ async function apiRequest(path: string, options = {}, headers = {}) {
   }
 
   return data;
+}
+
+export async function getAllTrips() {
+  return await apiRequest("/trips");
 }
 
 export async function getCurrentUser(requestOptions = {}, headers = {}) {
@@ -81,9 +83,19 @@ export function useMutateCurrentUser(
 export function useCurrentUser() {
   return useQuery({
     retry: false,
-    queryKey: ["auth", "user"],
+    queryKey: ["auth", "user", "trips"],
     queryFn: async () => {
       return getCurrentUser();
+    },
+  });
+}
+
+export function useGetAllTrips() {
+  return useQuery({
+    retry: false,
+    queryKey: ["trips"],
+    queryFn: async () => {
+      return getAllTrips();
     },
   });
 }
