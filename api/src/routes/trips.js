@@ -30,6 +30,35 @@ export default async function routes(fastify) {
     return { trips };
   });
 
+  fastify.get(
+    "/:tripId",
+    {
+      schema: {
+        params: {
+          type: "object",
+          properties: {
+            tripId: { type: "integer" },
+          },
+          required: ["tripId"],
+        },
+      },
+    },
+    async function handler(req, resp) {
+      const { tripId } = req.params;
+
+      const trip = await prisma.trip.findUnique({
+        where: { id: tripId },
+        include: {
+          categories: {
+            include: { tasks: { take: 5, orderBy: { id: "asc" } } },
+          },
+        },
+      });
+
+      return { trip: trip };
+    }
+  );
+
   fastify.post("/", async function handler(req, reply) {
     // create trip model
     const trip = await prisma.trip.create({
