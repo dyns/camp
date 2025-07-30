@@ -1,4 +1,4 @@
-import { useGetAllTrips } from "../apiClient/client";
+import { useGetAllTrips } from "../apiClient/trips";
 import { Link } from "react-router";
 
 export default function Trips() {

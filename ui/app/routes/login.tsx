@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { redirect, NavLink, useNavigate } from "react-router";
-import { useMutateCurrentUser, getCurrentUser } from "../apiClient/client";
+import { useMutateCurrentUser, getCurrentUser } from "../apiClient/user";
 
 const ACTIVE_USER_REDIRECT = "/trips";
 

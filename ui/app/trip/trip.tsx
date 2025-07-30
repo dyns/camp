@@ -6,6 +6,9 @@ import { TaskItem } from "../components/task";
 import { Modal, useModal } from "../components/modal";
 import type { Task, Category } from "~/types";
 
+import { useGetTrip } from "../apiClient/trips";
+import { useMutateTask } from "../apiClient/task";
+
 function AddTaskModal({
   addTaskToCategory,
   modalRef,
@@ -222,14 +225,40 @@ function EditTaskModal({
   );
 }
 
-export function Welcome() {
-  const {
-    categories,
-    addTaskToCategory,
-    toggleTaskCompletion,
-    updateTask,
-    deleteTask,
-  } = useCategories();
+export function TripPage() {
+  const { data } = useGetTrip(9);
+
+  if (data) {
+    return <TripPageContent data={data} />;
+  } else {
+    ("loading trip data");
+  }
+}
+
+function TripPageContent({ data }) {
+  // const {
+  //   categories,
+  //   addTaskToCategory,
+  //   toggleTaskCompletion,
+  //   updateTask,
+  //   deleteTask,
+  // } = useCategoriesFake();
+
+  const trip = data.trip;
+
+  console.log("trip data", data);
+
+  const categories = data?.trip?.categories || [];
+
+  const addTaskToCategory = () => {};
+  const updateTask = addTaskToCategory();
+  const deleteTask = () => {};
+
+  const mutateTask = useMutateTask();
+
+  const toggleTaskCompletion = (taskId: number, complete: boolean) => {
+    mutateTask.mutate({ id: taskId, complete });
+  };
 
   const {
     modalRef: addTaskModalRef,
@@ -244,6 +273,10 @@ export function Welcome() {
   } = useModal<Task>();
 
   const maxGlanceTaskLength = 3;
+
+  if (!data) {
+    return "loading";
+  }
 
   return (
     <main className="flex flex-col min-h-screen bg-base-200">
@@ -277,9 +310,7 @@ export function Welcome() {
       <div className="flex-1 flex flex-col items-center gap-10 min-h-0 bg-base-200 px-4 pb-8">
         <h1 className="text-3xl font-bold mt-8 mb-2">Let's go outside 🏔️</h1>
         <div className="flex items-center justify-between w-full max-w-2xl mb-2">
-          <h2 className="text-xl font-semibold">
-            Put Project Name here (at a glance):
-          </h2>
+          <h2 className="text-xl font-semibold">{trip.name}</h2>
           <Link to="/trip-settings" className="btn btn-primary btn-sm ml-4">
             Trip Preferences
           </Link>
@@ -303,75 +334,85 @@ export function Welcome() {
           updateTask={updateTask}
           deleteTask={deleteTask}
         />
-        <ul className="w-full max-w-2xl space-y-8">
-          {categories.map((category) => {
-            const categoryCompleted = category.tasks.reduce(
-              (isAllComplete, task) => {
-                return isAllComplete && task.complete;
-              },
-              true
-            );
+        {categories.length > 0 ? (
+          <ul className="w-full max-w-2xl space-y-8">
+            {categories.map((category) => {
+              const categoryCompleted = category.tasks.reduce(
+                (isAllComplete, task) => {
+                  return isAllComplete && task.complete;
+                },
+                true
+              );
 
-            return (
-              <li key={category.name} className="mb-2">
-                <div className="flex items-center mb-2 mt-2">
-                  <Link
-                    className={
-                      "text-lg font-semibold transition-all duration-150 " +
-                      (categoryCompleted
-                        ? "line-through text-gray-400"
-                        : "text-primary")
-                    }
-                    to={`/category/${category.name.toLowerCase()}`}
-                  >
-                    {category.name}
-                  </Link>
-                  <button
-                    className="btn btn-outline btn-sm ml-6"
-                    onClick={() => {
-                      setShowAddTaskModal({ show: true, data: category.name });
-                    }}
-                  >
-                    +
-                  </button>
-                </div>
-                <ul className="list bg-base-100 rounded-box shadow-md divide-y divide-base-200">
-                  {category.tasks.slice(0, maxGlanceTaskLength).map((task) => (
-                    <li
-                      key={task.name}
-                      className={`list-row px-4 py-2 flex items-center ${
-                        task.complete ? "line-through text-gray-400" : ""
-                      }`}
+              return (
+                <li key={category.name} className="mb-2">
+                  <div className="flex items-center mb-2 mt-2">
+                    <Link
+                      className={
+                        "text-lg font-semibold transition-all duration-150 " +
+                        (categoryCompleted
+                          ? "line-through text-gray-400"
+                          : "text-primary")
+                      }
+                      to={`/category/${category.name.toLowerCase()}`}
                     >
-                      <TaskItem
-                        task={task}
-                        onClick={() => {
-                          setShowEditTaskModal({ show: true, data: task });
-                        }}
-                        onCheck={() => {
-                          toggleTaskCompletion(task.id, !task.complete);
-                        }}
-                      />
-                    </li>
-                  ))}
-                  {category.tasks.length > maxGlanceTaskLength ? (
-                    <li className="list-row px-4 py-2 text-sm text-gray-500">
-                      View {category.tasks.length - maxGlanceTaskLength} more
-                      items in this category
-                    </li>
-                  ) : null}
-                </ul>
-              </li>
-            );
-          })}
-        </ul>
+                      {category.name}
+                    </Link>
+                    <button
+                      className="btn btn-outline btn-sm ml-6"
+                      onClick={() => {
+                        setShowAddTaskModal({
+                          show: true,
+                          data: category.name,
+                        });
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <ul className="list bg-base-100 rounded-box shadow-md divide-y divide-base-200">
+                    {category.tasks
+                      .slice(0, maxGlanceTaskLength)
+                      .map((task) => (
+                        <li
+                          key={task.name}
+                          className={`list-row px-4 py-2 flex items-center ${
+                            task.complete ? "line-through text-gray-400" : ""
+                          }`}
+                        >
+                          <TaskItem
+                            task={task}
+                            onClick={() => {
+                              setShowEditTaskModal({ show: true, data: task });
+                            }}
+                            onCheck={() => {
+                              toggleTaskCompletion(task.id, !task.complete);
+                            }}
+                          />
+                        </li>
+                      ))}
+                    {category.tasks.length > maxGlanceTaskLength ? (
+                      <li className="list-row px-4 py-2 text-sm text-gray-500">
+                        View {category.tasks.length - maxGlanceTaskLength} more
+                        items in this category
+                      </li>
+                    ) : null}
+                  </ul>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          "No Categories"
+        )}
+
         <h1 className="text-2xl font-bold mt-12">Food Itinerary</h1>
       </div>
     </main>
   );
 }
 
-export function useCategories() {
+export function useCategoriesFake() {
   const defaultCategories: Category[] = [
     {
       id: crypto.randomUUID(),
