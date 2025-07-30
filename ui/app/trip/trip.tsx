@@ -7,7 +7,7 @@ import { Modal, useModal } from "../components/modal";
 import type { Task, Category } from "~/types";
 
 import { useGetTrip } from "../apiClient/trips";
-import { useUpdateTask, useCreateTask } from "../apiClient/task";
+import { useUpdateTask, useCreateTask, useDeleteTask } from "../apiClient/task";
 
 function AddTaskModal({
   addTaskToCategory,
@@ -85,7 +85,7 @@ function EditTaskModal({
   showModal: { show: boolean; data: Task | null };
   setShowModal: Dispatch<SetStateAction<{ show: boolean; data: Task | null }>>;
   updateTask: (task: Task) => void;
-  deleteTask: (taskId: string) => void;
+  deleteTask: (taskId: number) => void;
 }) {
   const [editText, setEditText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
@@ -192,7 +192,7 @@ function EditTaskModal({
                   className="btn btn-error text-white"
                   onClick={() => {
                     if (showModal.data) {
-                      deleteTask(showModal.data?.id);
+                      deleteTask(showModal.data.id);
                     }
                     setShowDeleteTooltip(false);
                     setShowModal({ show: false, data: null });
@@ -251,10 +251,14 @@ function TripPageContent({ data }) {
 
   const categories = data?.trip?.categories || [];
 
-  const deleteTask = () => {};
-
   const mutateTask = useUpdateTask();
   const createTask = useCreateTask();
+  const deleteTask = useDeleteTask();
+
+  const deleteTaskHandler = (id: number) => {
+    // useDeleteTask
+    deleteTask.mutate(id);
+  };
 
   const addTaskToCategory = (categoryId: number, taskText: string) => {
     createTask.mutate({ categoryId, name: taskText });
@@ -344,7 +348,7 @@ function TripPageContent({ data }) {
           showModal={showEditTaskModal}
           setShowModal={setShowEditTaskModal}
           updateTask={updateTask}
-          deleteTask={deleteTask}
+          deleteTask={deleteTaskHandler}
         />
         {categories.length > 0 ? (
           <ul className="w-full max-w-2xl space-y-8">

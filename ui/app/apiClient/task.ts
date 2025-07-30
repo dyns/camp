@@ -29,10 +29,34 @@ export function useUpdateTask(
   onSettled: (data, error, variables, context) => void = () => {}
 ) {
   return useMutation({
-    mutationFn: (task: { id: Number; complete?: boolean; name?: string }) => {
+    mutationFn: (task: { id: number; complete?: boolean; name?: string }) => {
       return apiRequest(`/tasks/${task.id}`, {
         method: "PATCH",
         body: JSON.stringify(task),
+      });
+    },
+    onSuccess: (data) => {
+      const task = data.task;
+
+      queryClient.invalidateQueries({
+        queryKey: [`trip:${task.category.tripId}`],
+      });
+    },
+    onSettled: onSettled,
+    // onError: (err) => {
+    //   console.error(err);
+    // },
+  });
+}
+
+export function useDeleteTask(
+  onSettled: (data, error, variables, context) => void = () => {}
+) {
+  return useMutation({
+    mutationFn: (id: number) => {
+      return apiRequest(`/tasks/${id}`, {
+        method: "DELETE",
+        body: "{}",
       });
     },
     onSuccess: (data) => {
