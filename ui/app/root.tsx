@@ -8,8 +8,9 @@ import {
 } from "react-router";
 
 import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import { queryClient } from "./apiClient/client";
+import { queryClient } from "./apiClient/clientUtils";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -39,6 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <QueryClientProvider client={queryClient}>
           {children}
+          <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
         <ScrollRestoration />
         <Scripts />
