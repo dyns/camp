@@ -251,7 +251,6 @@ function TripPageContent({ data }) {
 
   const categories = data?.trip?.categories || [];
 
-  const updateTask = () => {};
   const deleteTask = () => {};
 
   const mutateTask = useUpdateTask();
@@ -263,6 +262,14 @@ function TripPageContent({ data }) {
 
   const toggleTaskCompletion = (taskId: number, complete: boolean) => {
     mutateTask.mutate({ id: taskId, complete });
+  };
+
+  const updateTask = (task: Task) => {
+    mutateTask.mutate({
+      id: task.id,
+      complete: task.complete,
+      name: task.name,
+    });
   };
 
   const {
@@ -398,8 +405,8 @@ function TripPageContent({ data }) {
                       ))}
                     {category.tasks.length > maxGlanceTaskLength ? (
                       <li className="list-row px-4 py-2 text-sm text-gray-500">
-                        View {category.tasks.length - maxGlanceTaskLength} more
-                        items in this category
+                        {category.tasks.length - maxGlanceTaskLength} more tasks
+                        in this category
                       </li>
                     ) : null}
                   </ul>

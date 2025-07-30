@@ -29,7 +29,7 @@ export function useUpdateTask(
   onSettled: (data, error, variables, context) => void = () => {}
 ) {
   return useMutation({
-    mutationFn: (task: { id: Number; complete?: boolean }) => {
+    mutationFn: (task: { id: Number; complete?: boolean; name?: string }) => {
       return apiRequest(`/tasks/${task.id}`, {
         method: "PATCH",
         body: JSON.stringify(task),
