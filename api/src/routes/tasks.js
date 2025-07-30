@@ -9,6 +9,7 @@ export default async function routes(fastify) {
 
     const createdTask = await prisma.task.create({
       data: { name, categoryId },
+      include: { category: { select: { tripId: true } } },
     });
 
     return { task: createdTask };
@@ -38,7 +39,7 @@ export default async function routes(fastify) {
         include: { category: { select: { tripId: true } } },
       });
 
-      return updated;
+      return { task: updated };
     }
   );
 }
