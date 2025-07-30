@@ -32,7 +32,6 @@ export default async function routes(fastify) {
       const { id } = request.params;
       const data = request.body || {};
 
-      console.log("task patch", id, typeof id, data);
       const updated = await prisma.task.update({
         where: { id },
         data,
@@ -40,6 +39,31 @@ export default async function routes(fastify) {
       });
 
       return { task: updated };
+    }
+  );
+
+  fastify.delete(
+    "/:id",
+    {
+      schema: {
+        params: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+          },
+          required: ["id"],
+        },
+      },
+    },
+    async (request, response) => {
+      const { id } = request.params;
+
+      const task = await prisma.task.delete({
+        where: { id },
+        include: { category: { select: { tripId: true } } },
+      });
+
+      return { task: task };
     }
   );
 }
