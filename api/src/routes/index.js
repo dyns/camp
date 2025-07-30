@@ -3,8 +3,10 @@ import tripsRoutes from "./trips.js";
 import usersRoutes from "./users.js";
 import authRoutes from "./auth.js";
 import tasksRoutes from "./tasks.js";
+import categoriesRoutes from "./categories.js";
 
 fastify.register(usersRoutes, { prefix: "/users" });
 fastify.register(tripsRoutes, { prefix: "/trips" });
 fastify.register(authRoutes, { prefix: "/auth" });
 fastify.register(tasksRoutes, { prefix: "/tasks" });
+fastify.register(categoriesRoutes, { prefix: "/categories" });
