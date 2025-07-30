@@ -19,6 +19,7 @@ const __dirname2 = path.dirname(srcDirname);
 fastify.register(fastifyCors, {
   origin: "http://localhost:5173", // Your React/Vite UI origin
   credentials: true, // Allow cookies
+  methods: ["GET", "HEAD", "POST", "PATCH"],
 });
 
 fastify.register(import("@fastify/multipart"));
