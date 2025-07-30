@@ -1,7 +1,7 @@
-export type Task = { name: string; complete: boolean; id: string };
+export type Task = { name: string; complete: boolean; id: number };
 
 export type Category = {
   name: string;
-  id: string;
+  id: number;
   tasks: Task[];
 };
