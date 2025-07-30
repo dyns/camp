@@ -1,21 +1,45 @@
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "./clientUtils";
 
-export function useMutateTask(
+export function useCreateTask(
   onSettled: (data, error, variables, context) => void = () => {}
 ) {
   return useMutation({
-    mutationFn: (tripUpdateFields: { id: Number; complete?: boolean }) => {
-      return apiRequest(`/tasks/${tripUpdateFields.id}`, {
-        method: "PATCH",
-        body: JSON.stringify(tripUpdateFields),
+    mutationFn: (task: { name: string; categoryId: number }) => {
+      return apiRequest(`/tasks`, {
+        method: "POST",
+        body: JSON.stringify(task),
       });
     },
     onSuccess: (data) => {
-      console.log("mutate task success", `trip:${data.category.tripId}`);
-      // queryClient.setQueryData([`trip:${data.category.tripId}`], data);
+      const task = data.task;
+      console.log("task created", { data });
       queryClient.invalidateQueries({
-        queryKey: [`trip:${data.category.tripId}`],
+        queryKey: [`trip:${task.category.tripId}`],
+      });
+    },
+    onSettled: onSettled,
+    // onError: (err) => {
+    //   console.error(err);
+    // },
+  });
+}
+
+export function useUpdateTask(
+  onSettled: (data, error, variables, context) => void = () => {}
+) {
+  return useMutation({
+    mutationFn: (task: { id: Number; complete?: boolean }) => {
+      return apiRequest(`/tasks/${task.id}`, {
+        method: "PATCH",
+        body: JSON.stringify(task),
+      });
+    },
+    onSuccess: (data) => {
+      const task = data.task;
+
+      queryClient.invalidateQueries({
+        queryKey: [`trip:${task.category.tripId}`],
       });
     },
     onSettled: onSettled,

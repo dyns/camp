@@ -7,7 +7,7 @@ import { Modal, useModal } from "../components/modal";
 import type { Task, Category } from "~/types";
 
 import { useGetTrip } from "../apiClient/trips";
-import { useMutateTask } from "../apiClient/task";
+import { useUpdateTask, useCreateTask } from "../apiClient/task";
 
 function AddTaskModal({
   addTaskToCategory,
@@ -15,11 +15,11 @@ function AddTaskModal({
   showModal,
   setShowModal,
 }: {
-  addTaskToCategory: (categoryId: string, taskText: string) => void;
+  addTaskToCategory: (categoryId: number, taskText: string) => void;
   modalRef: RefObject<HTMLDialogElement | null>;
-  showModal: { show: boolean; data: string | null };
+  showModal: { show: boolean; data: number | null };
   setShowModal: Dispatch<
-    SetStateAction<{ show: boolean; data: string | null }>
+    SetStateAction<{ show: boolean; data: number | null }>
   >;
 }) {
   const [todoText, setTodoText] = useState("test");
@@ -61,7 +61,8 @@ function AddTaskModal({
             setTodoText(trimmed);
 
             if (trimmed) {
-              addTaskToCategory(showModal.data as string, todoText);
+              const categoryId = Number.parseInt(showModal.data);
+              addTaskToCategory(categoryId, todoText);
               setShowModal({ show: false, data: null });
             }
           }}
@@ -250,11 +251,15 @@ function TripPageContent({ data }) {
 
   const categories = data?.trip?.categories || [];
 
-  const addTaskToCategory = () => {};
-  const updateTask = addTaskToCategory();
+  const updateTask = () => {};
   const deleteTask = () => {};
 
-  const mutateTask = useMutateTask();
+  const mutateTask = useUpdateTask();
+  const createTask = useCreateTask();
+
+  const addTaskToCategory = (categoryId: number, taskText: string) => {
+    createTask.mutate({ categoryId, name: taskText });
+  };
 
   const toggleTaskCompletion = (taskId: number, complete: boolean) => {
     mutateTask.mutate({ id: taskId, complete });
@@ -264,7 +269,7 @@ function TripPageContent({ data }) {
     modalRef: addTaskModalRef,
     setShowModal: setShowAddTaskModal,
     showModal: showAddTaskModal,
-  } = useModal<string>();
+  } = useModal<number>();
 
   const {
     modalRef: editTaskModalRef,
@@ -363,7 +368,7 @@ function TripPageContent({ data }) {
                       onClick={() => {
                         setShowAddTaskModal({
                           show: true,
-                          data: category.name,
+                          data: category.id,
                         });
                       }}
                     >
