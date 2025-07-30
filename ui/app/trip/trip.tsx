@@ -1,7 +1,7 @@
 import { useState, useLayoutEffect, useRef, useEffect } from "react";
 import type { RefObject, Dispatch, SetStateAction } from "react";
 
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
 import { TaskItem } from "../components/task";
 import { Modal, useModal } from "../components/modal";
 import type { Task, Category } from "~/types";
@@ -227,10 +227,15 @@ function EditTaskModal({
 }
 
 export function TripPage() {
-  const { data } = useGetTrip(9);
+  const { id } = useParams();
+  const defaultTripId = Number.parseInt(id || "");
 
-  if (data) {
+  const { data, error } = useGetTrip(defaultTripId);
+
+  if (data && defaultTripId) {
     return <TripPageContent data={data} />;
+  } else if (error) {
+    return "Error";
   } else {
     ("loading trip data");
   }
@@ -333,7 +338,10 @@ function TripPageContent({ data }) {
         </div>
         <div className="flex items-center justify-between w-full max-w-2xl mb-2">
           <h2 className="text-xl font-semibold">Categories:</h2>
-          <Link to="/create-category" className="btn btn-primary btn-sm ml-4">
+          <Link
+            to={{ pathname: "/create-category", search: `?tripId=${trip.id}` }}
+            className="btn btn-primary btn-sm ml-4"
+          >
             New Category
           </Link>
         </div>
