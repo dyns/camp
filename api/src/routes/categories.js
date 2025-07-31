@@ -1,6 +1,9 @@
 import { prisma } from "../lib/prisma.js";
+import { authMiddleware } from "../lib/middleware.js";
 
 export default async function routes(fastify) {
+  fastify.addHook("preHandler", authMiddleware);
+
   fastify.post("/", async (request) => {
     const { name, tripId, description } = request.body;
 

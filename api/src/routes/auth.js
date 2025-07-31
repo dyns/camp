@@ -5,6 +5,17 @@ import {
 } from "../lib/session.js";
 
 export default async function routes(fastify) {
+  fastify.post("/signout", async function handleSignOut(request, reply) {
+    reply
+      .clearCookie(SESSION_COOKIE_NAME, {
+        path: "/",
+        httpOnly: true,
+        sameSite: "strict",
+      })
+      .status(204)
+      .send();
+  });
+
   fastify.post("/signup", async (request, reply) => {
     const { password } = request.body;
     let { name, email } = request.body;
