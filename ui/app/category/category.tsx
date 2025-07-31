@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useParams } from "react-router";
 import { useGetCategory } from "../apiClient/categories";
-import { useUpdateTask, useDeleteTask } from "../apiClient/task";
+import { useUpdateTask, useDeleteTask, useCreateTask } from "../apiClient/task";
 import { useUpdateCategory } from "../apiClient/categories";
 
 import { useModal } from "../components/modal";
 import { EditTaskModal } from "../components/EditTaskModal";
+import { AddTaskModal } from "../components/AddTaskModal";
 import type { Category, Task } from "~/types";
 
 import type { UseMutationResult } from "@tanstack/react-query";
@@ -61,6 +62,17 @@ export function CategoryContent({ category }: { category: any }) {
   };
 
   const updateCategory = useUpdateCategory();
+  const createTask = useCreateTask();
+
+  const {
+    modalRef: addTaskModalRef,
+    setShowModal: setShowAddTaskModal,
+    showModal: showAddTaskModal,
+  } = useModal<number>();
+
+  const handleCreateTask = (categoryId: number, taskText: string) => {
+    createTask.mutate({ categoryId: categoryId, name: taskText });
+  };
 
   return (
     <div className="min-h-screen bg-base-200 flex items-center justify-center py-8">
@@ -71,6 +83,12 @@ export function CategoryContent({ category }: { category: any }) {
         updateTask={updateTask}
         deleteTask={deleteTaskHandler}
       />
+      <AddTaskModal
+        addTaskToCategory={handleCreateTask}
+        modalRef={addTaskModalRef}
+        showModal={showAddTaskModal}
+        setShowModal={setShowAddTaskModal}
+      />
       <div className="bg-white rounded-lg shadow-lg w-full max-w-xl p-8 relative">
         {/* Trip name floating above title */}
         <div className="absolute -top-6 left-4 bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-semibold shadow">
@@ -80,7 +98,22 @@ export function CategoryContent({ category }: { category: any }) {
           <EditName category={category} updateCategory={updateCategory} />
         </div>
         <div className="mb-4">
-          <h2 className="text-xl font-semibold mb-2 text-gray-700">Tasks</h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-xl font-semibold text-gray-700">Tasks</h2>
+            <button
+              type="button"
+              className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow ml-2"
+              style={{ minWidth: "80px" }}
+              onClick={() => {
+                setShowAddTaskModal({
+                  show: true,
+                  data: category.id,
+                });
+              }}
+            >
+              Add
+            </button>
+          </div>
           <div className="bg-gray-50 rounded-lg border border-gray-200">
             <ul className="divide-y divide-gray-200">
               {category.uncompletedTasks.map((task: Task) => (
