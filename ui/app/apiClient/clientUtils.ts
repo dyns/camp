@@ -33,8 +33,6 @@ export async function apiRequest(path: string, options = {}, headers = {}) {
     ? await res.json()
     : await res.text();
 
-  console.log({ res, data });
-
   if (!res.ok) {
     const message =
       typeof data === "string" ? data : data.error || "Unknown error";

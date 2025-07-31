@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { redirect, NavLink, useNavigate } from "react-router";
-import { useMutateCurrentUser, getCurrentUser } from "../apiClient/user";
+import { useSignInUser, getCurrentUser } from "../apiClient/user";
 
 const ACTIVE_USER_REDIRECT = "/trips";
 
@@ -22,13 +22,11 @@ export default function LogInPage() {
 
 function LoginForm() {
   const navigate = useNavigate();
-  const { mutate, isPending, isError, error } = useMutateCurrentUser(
-    (data, error) => {
-      if (!error) {
-        navigate(ACTIVE_USER_REDIRECT);
-      }
+  const { mutate, isPending, isError, error } = useSignInUser((data, error) => {
+    if (!error) {
+      navigate(ACTIVE_USER_REDIRECT);
     }
-  );
+  });
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
