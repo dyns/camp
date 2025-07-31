@@ -60,11 +60,9 @@ export default function CreateCategory() {
   const handleFormChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    console.log("form change", { name: e.target.name, value: e.target.value });
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  console.log({ formData });
   return (
     <div className="flex items-center justify-center min-h-screen bg-base-200">
       <form

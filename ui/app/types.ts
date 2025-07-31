@@ -4,4 +4,5 @@ export type Category = {
   name: string;
   id: number;
   tasks: Task[];
+  description?: string;
 };
