@@ -88,32 +88,7 @@ function TripPageContent({ data }) {
   return (
     <main className="flex flex-col min-h-screen bg-base-200">
       {/* Top bar with user preferences icon */}
-      <div className="flex items-center justify-end px-8 py-4 bg-white shadow-sm">
-        <Link to="/trips" className="btn btn-primary btn-sm ml-4">
-          View all Trips
-        </Link>
-        <Link
-          to="/account-settings"
-          className="btn btn-circle btn-ghost text-2xl text-primary hover:bg-base-100"
-          title="Update user preferences"
-        >
-          {/* Head silhouette icon (Heroicons user icon) */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-7 h-7"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25v-1.5A2.25 2.25 0 016.75 16.5h10.5a2.25 2.25 0 012.25 2.25v1.5"
-            />
-          </svg>
-        </Link>
-      </div>
+
       <div className="flex-1 flex flex-col items-center gap-10 min-h-0 bg-base-200 px-4 pb-8">
         <h1 className="text-3xl font-bold mt-8 mb-2">Let's go outside 🏔️</h1>
         <div className="flex items-center justify-between w-full max-w-2xl mb-2">
@@ -215,8 +190,6 @@ function TripPageContent({ data }) {
         ) : (
           "No Categories"
         )}
-
-        <h1 className="text-2xl font-bold mt-12">Food Itinerary</h1>
       </div>
     </main>
   );

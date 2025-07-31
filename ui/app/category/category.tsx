@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router";
+import { useParams, Link } from "react-router";
 import { useGetCategory } from "../apiClient/categories";
 import { useUpdateTask, useDeleteTask, useCreateTask } from "../apiClient/task";
 import { useUpdateCategory } from "../apiClient/categories";
@@ -92,7 +92,9 @@ export function CategoryContent({ category }: { category: any }) {
       <div className="bg-white rounded-lg shadow-lg w-full max-w-xl p-8 relative">
         {/* Trip name floating above title */}
         <div className="absolute -top-6 left-4 bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-semibold shadow">
-          Trip: {category.trip.name}
+          <Link to={`/trips/${category.trip.id}`}>
+            Trip: {category.trip.name}
+          </Link>
         </div>
         <div className="mb-6">
           <EditName category={category} updateCategory={updateCategory} />
