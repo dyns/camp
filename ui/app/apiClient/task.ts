@@ -19,7 +19,7 @@ export function useCreateTask(
       });
 
       queryClient.invalidateQueries({
-        queryKey: [`category:${task.category.id}`],
+        queryKey: [`category:${task.categoryId}`],
       });
     },
     onSettled: onSettled,
