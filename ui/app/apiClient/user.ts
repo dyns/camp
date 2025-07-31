@@ -6,6 +6,13 @@ export async function getCurrentUser(requestOptions = {}, headers = {}) {
   return await apiRequest("/users/me", requestOptions, headers);
 }
 
+export async function getUserByEmail(email: string) {
+  return await apiRequest("/users/search", {
+    method: "POST",
+    body: JSON.stringify({ email: email }),
+  });
+}
+
 export async function signOut() {
   return await apiRequest("/auth/signout", {
     method: "POST",
