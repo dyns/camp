@@ -3,10 +3,17 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "./clientUtils";
 
 export async function getCurrentUser(requestOptions = {}, headers = {}) {
-  return await apiRequest("/auth/me", requestOptions, headers);
+  return await apiRequest("/users/me", requestOptions, headers);
 }
 
-export function useMutateCurrentUser(
+export async function signOut() {
+  return await apiRequest("/auth/signout", {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+}
+
+export function useSignInUser(
   onSettled: (data, error, variables, context) => void = () => {}
 ) {
   return useMutation({
@@ -34,9 +41,27 @@ export function useMutateCurrentUser(
 export function useCurrentUser() {
   return useQuery({
     retry: false,
-    queryKey: ["auth", "user", "trips"],
+    queryKey: ["me"],
     queryFn: async () => {
       return getCurrentUser();
     },
+  });
+}
+
+export function useUpdateCurrentUser() {
+  return useMutation({
+    mutationFn: (data: { email?: string; name?: string }) => {
+      return apiRequest("/users/me", {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: (data) => {
+      // After login, optimistically update cached user data
+      queryClient.setQueryData(["me"], data);
+    },
+    // onError: (err) => {
+    //   console.error(err);
+    // },
   });
 }
