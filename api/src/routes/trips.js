@@ -50,9 +50,57 @@ export default async function routes(fastify) {
         where: { id: tripId },
         include: {
           categories: {
-            include: { tasks: { take: 5, orderBy: { id: "asc" } } },
+            include: {
+              tasks: { take: 5, orderBy: { id: "asc" } },
+            },
           },
+          guests: true,
         },
+      });
+
+      return { trip: trip };
+    }
+  );
+
+  fastify.patch(
+    "/:id",
+    {
+      schema: {
+        params: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+          },
+          required: ["id"],
+        },
+      },
+    },
+    async function handler(request) {
+      const { id } = request.params;
+      const data = request.body || {};
+
+      // add invited guest logic
+      const guestEmails = data["guestEmails"];
+
+      if (guestEmails !== undefined || guestEmails !== null) {
+        const guestUsers = await prisma.user.findMany({
+          where: { email: { in: guestEmails } },
+          select: { id: true },
+        });
+
+        data["guests"] = { set: guestUsers };
+      }
+
+      if (data.startDate) {
+        data["startDate"] = new Date(data.startDate);
+      }
+
+      delete data["guestEmails"];
+
+      const trip = await prisma.trip.update({
+        where: { id: id },
+        include: { guests: true },
+        data,
       });
 
       return { trip: trip };
