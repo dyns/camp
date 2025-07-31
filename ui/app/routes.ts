@@ -7,6 +7,6 @@ export default [
   route("/account-settings", "routes/accountSettings.tsx"),
   route("/trips", "routes/trips.tsx"),
   route("/trips/:id", "routes/trip.tsx"),
-  route("/trip-settings", "routes/tripSettings.tsx"),
+  route("/trip-settings/:id", "routes/tripSettings.tsx"),
   route("/category/:id", "routes/category.tsx"),
 ] satisfies RouteConfig;

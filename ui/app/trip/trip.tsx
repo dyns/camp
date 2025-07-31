@@ -93,7 +93,10 @@ function TripPageContent({ data }) {
         <h1 className="text-3xl font-bold mt-8 mb-2">Let's go outside 🏔️</h1>
         <div className="flex items-center justify-between w-full max-w-2xl mb-2">
           <h2 className="text-xl font-semibold">{trip.name}</h2>
-          <Link to="/trip-settings" className="btn btn-primary btn-sm ml-4">
+          <Link
+            to={`/trip-settings/${trip.id}`}
+            className="btn btn-primary btn-sm ml-4"
+          >
             Trip Preferences
           </Link>
         </div>
