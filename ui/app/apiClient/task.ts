@@ -13,9 +13,13 @@ export function useCreateTask(
     },
     onSuccess: (data) => {
       const task = data.task;
-      console.log("task created", { data });
+
       queryClient.invalidateQueries({
         queryKey: [`trip:${task.category.tripId}`],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [`category:${task.category.id}`],
       });
     },
     onSettled: onSettled,
@@ -41,6 +45,10 @@ export function useUpdateTask(
       queryClient.invalidateQueries({
         queryKey: [`trip:${task.category.tripId}`],
       });
+
+      queryClient.invalidateQueries({
+        queryKey: [`category:${task.categoryId}`],
+      });
     },
     onSettled: onSettled,
     // onError: (err) => {
@@ -64,6 +72,10 @@ export function useDeleteTask(
 
       queryClient.invalidateQueries({
         queryKey: [`trip:${task.category.tripId}`],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [`category:${task.categoryId}`],
       });
     },
     onSettled: onSettled,
