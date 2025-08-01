@@ -24,14 +24,89 @@ export default function TripSettings() {
   console.log("trip settings data", { data });
   return (
     <div>
-      <TripSettingsForm trip={data.trip} />
+      <UpdateTripForm trip={data.trip} />
     </div>
   );
 }
 
-function TripSettingsForm({ trip }) {
+function UpdateTripForm({ trip }) {
   const updateTrip = useUpdateTrip();
 
+  // const date = new Date(trip.startDate);
+
+  // const [tripName, setTripName] = useState<string>(trip.name);
+  // const [description, setDescription] = useState<string>(trip.description);
+  // const [startDate, setStartDate] = useState<string>(
+  //   date.toISOString().split("T")[0]
+  // );
+  // const [inviteEmail, setInviteEmail] = useState<string>("");
+  // const [invited, setInvited] = useState<string[]>(
+  //   trip.guests.map((guest) => {
+  //     return guest.email;
+  //   })
+  // );
+
+  // const [updateInviteStatus, setUpdateInviteStatus] = useState("");
+  // const [saveStatus, setSaveStatus] = useState("");
+
+  // const handleInvite = async (
+  //   e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
+  // ) => {
+  //   e.preventDefault();
+  //   setUpdateInviteStatus("");
+
+  //   const email = inviteEmail.trim();
+  //   if (email && !invited.includes(email)) {
+  //     // check that a user with that email exists
+
+  //     let user = null;
+
+  //     try {
+  //       user = (await getUserByEmail(email)).user;
+  //       console.log("found user:", user);
+  //     } catch (e) {
+  //       console.log("error finding user:", e);
+  //     }
+
+  //     if (user) {
+  //       setInvited([...invited, email]);
+  //       setInviteEmail("");
+  //       setUpdateInviteStatus("");
+  //     } else {
+  //       setUpdateInviteStatus(`User not found with email: ${email}`);
+  //     }
+  //   }
+  // };
+
+  // const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   setSaveStatus("");
+  //   // check that fields are valid
+  //   const formattedTripName = tripName.trim();
+  //   const formattedDescription = description.trim();
+  //   const formattedDate = new Date(startDate).toISOString();
+
+  //   if (formattedTripName) {
+  //     await updateTrip.mutateAsync({
+  //       id: trip.id,
+  //       name: formattedTripName,
+  //       description: formattedDescription,
+  //       guestEmails: invited,
+  //       startDate: formattedDate,
+  //     });
+  //   } else {
+  //     setSaveStatus("Name field is required");
+  //   }
+  // };
+
+  const onTripSubmit = (tripForm) => {
+    updateTrip.mutate(tripForm);
+  };
+
+  return <TripForm trip={trip} onSubmit={onTripSubmit} />;
+}
+
+function TripForm({ trip, onSubmit }) {
   const date = new Date(trip.startDate);
 
   const [tripName, setTripName] = useState<string>(trip.name);
@@ -78,7 +153,7 @@ function TripSettingsForm({ trip }) {
     }
   };
 
-  const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaveStatus("");
     // check that fields are valid
@@ -87,7 +162,7 @@ function TripSettingsForm({ trip }) {
     const formattedDate = new Date(startDate).toISOString();
 
     if (formattedTripName) {
-      await updateTrip.mutateAsync({
+      onSubmit({
         id: trip.id,
         name: formattedTripName,
         description: formattedDescription,
@@ -252,11 +327,3 @@ function TripSettingsForm({ trip }) {
     </form>
   );
 }
-
-/*
-
-- invite users
-- make users mods (maybe just do that by default to go faster)
-- change trip name, description, date
-
-*/
