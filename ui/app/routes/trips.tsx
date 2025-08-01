@@ -7,7 +7,15 @@ export default function Trips() {
 
   return (
     <div className="max-w-md mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4 text-center">Your Trips</h1>
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-2xl font-bold">Your Trips</span>
+        <Link
+          to={"/create-trip"}
+          className="px-4 py-2 bg-blue-500 text-white font-bold rounded shadow hover:bg-blue-600 transition-colors"
+        >
+          Start a new trip
+        </Link>
+      </div>
       <ul className="space-y-3">
         {trips.map((trip) => {
           const date = new Date(trip.startDate);
