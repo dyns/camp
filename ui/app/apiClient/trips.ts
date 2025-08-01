@@ -9,6 +9,32 @@ async function getTrip(id: Number) {
   return await apiRequest(`/trips/${id}`);
 }
 
+export function useCreateTrip() {
+  return useMutation({
+    mutationFn: (trip: {
+      name: string;
+      description: string;
+      startDate: Date;
+      guestEmails: string[];
+    }) => {
+      return apiRequest(`/trips`, {
+        method: "POST",
+        body: JSON.stringify(trip),
+      });
+    },
+    onSuccess: (data) => {
+      const trip = data.trip;
+
+      queryClient.invalidateQueries({
+        queryKey: [`trip:${trip.id}`],
+      });
+    },
+    // onError: (err) => {
+    //   console.error(err);
+    // },
+  });
+}
+
 export function useGetAllTrips() {
   return useQuery({
     retry: false,
