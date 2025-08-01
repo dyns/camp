@@ -9,12 +9,16 @@ export default async function routes(fastify) {
     // return "these are the users";
   });
 
-  fastify.post("/search", async function searchUser(request) {
+  fastify.post("/search", async function searchUser(request, reply) {
     const { email } = request.body;
 
-    const user = await prisma.user.findUniqueOrThrow({ where: { email } });
+    try {
+      const user = await prisma.user.findUniqueOrThrow({ where: { email } });
 
-    return { user: { email: user.email } };
+      return { user: { email: user.email } };
+    } catch {
+      return reply.status(404).send({ error: "User not found" });
+    }
   });
 
   fastify.get("/me", async function getUser(request) {
