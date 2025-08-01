@@ -107,15 +107,20 @@ export default async function routes(fastify) {
     }
   );
 
-  fastify.post("/", async function handler(req, reply) {
+  fastify.post("/", async function handler(request, reply) {
+    const data = request.body || {};
+
     // create trip model
     const trip = await prisma.trip.create({
       data: {
-        name: "trip test",
-        description: "my description",
-        startDate: new Date(),
+        name: data.name,
+        description: data.description,
+        startDate: new Date(data.startDate),
         owners: {
-          connect: [{ id: req.user.id }],
+          connect: [{ id: request.user.id }],
+        },
+        guests: {
+          connect: data.guestEmails.map((email) => ({ email })),
         },
         categories: {
           create: [
@@ -144,6 +149,6 @@ export default async function routes(fastify) {
     // create default categories
     // commit to database together
 
-    return { tripData: trip };
+    return { trip: trip };
   });
 }
