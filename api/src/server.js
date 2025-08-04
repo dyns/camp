@@ -6,9 +6,7 @@ import fastifyCors from "@fastify/cors";
 import fs from "fs";
 import { pipeline } from "stream/promises";
 
-import { prisma } from "./lib/prisma.js";
 import { fastify } from "./lib/server.js";
-import { SESSION_COOKIE_NAME, COOKIE_SECRET } from "./lib/session.js";
 import { authMiddleware } from "./lib/middleware.js";
 import "./routes/index.js";
 
@@ -39,6 +37,10 @@ fastify.post("/users/profile-image", async function (req, reply) {
   const uploadPath = path.join(process.cwd(), "uploads", data.filename);
   await pipeline(data.file, fs.createWriteStream(uploadPath));
   return { url: `/uploads/${data.filename}` };
+});
+
+fastify.get("/", function getIndex() {
+  return "hello world";
 });
 
 // Protected routes (with auth)

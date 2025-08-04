@@ -36,7 +36,7 @@ model TripTaskCategory {
   description String?
   tripId      Int
   tasks       Task[]
-  trip        Trip    @relation(fields: [tripId], references: [id])
+  trip        Trip    @relation(fields: [tripId], references: [id], onDelete: Cascade)
 }
 
 model Task {
@@ -47,5 +47,5 @@ model Task {
   categoryId   Int
   assignedToId Int?
   assignedTo   User?            @relation(fields: [assignedToId], references: [id])
-  category     TripTaskCategory @relation(fields: [categoryId], references: [id])
+  category     TripTaskCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 }

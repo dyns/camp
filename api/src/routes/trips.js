@@ -62,6 +62,26 @@ export default async function routes(fastify) {
     }
   );
 
+  fastify.delete(
+    "/:id",
+    {
+      schema: {
+        params: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+          },
+          required: ["id"],
+        },
+      },
+    },
+    async function deleteTrip(request) {
+      const { id } = request.params;
+      const trip = await prisma.trip.delete({ where: { id } });
+      return { trip };
+    }
+  );
+
   fastify.patch(
     "/:id",
     {

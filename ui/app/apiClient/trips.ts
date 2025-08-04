@@ -9,6 +9,24 @@ async function getTrip(id: Number) {
   return await apiRequest(`/trips/${id}`);
 }
 
+export function useDeleteTrip() {
+  return useMutation({
+    mutationFn: (id: number) => {
+      return apiRequest(`/trips/${id}`, {
+        method: "DELETE",
+        body: JSON.stringify({}),
+      });
+    },
+    onSuccess: (data) => {
+      const trip = data.trip;
+
+      queryClient.invalidateQueries({
+        queryKey: [`trip:${trip.id}`],
+      });
+    },
+  });
+}
+
 export function useCreateTrip() {
   return useMutation({
     mutationFn: (trip: {
