@@ -20,7 +20,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgres://user:password@db:5432/appdb
+      DATABASE_URL: postgres://user:password@db:5432/appdb?schema=public
+      NODE_ENV: development
     depends_on:
       - db
 
