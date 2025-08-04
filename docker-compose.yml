@@ -13,10 +13,8 @@ services:
   api:
     build:
       context: ./api
-    volumes:
-      - ./api:/app
     working_dir: /app
-    command: npm run dev
+    command: sh -c "npx prisma migrate deploy && npm run dev"
     ports:
       - "3000:3000"
     environment:
