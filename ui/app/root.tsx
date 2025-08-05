@@ -30,25 +30,9 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        <QueryClientProvider client={queryClient}>
-          <AppHeader>{children}</AppHeader>
-          <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
-        <ScrollRestoration />
-        <Scripts />
-      </body>
-    </html>
-  );
+export async function loader() {
+  const data = { ENV: { PUBLIC_API_URL: process.env.PUBLIC_API_URL } };
+  return data;
 }
 
 function AppHeader({ children }: { children: React.ReactNode }) {
@@ -92,8 +76,34 @@ function AppHeader({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
-  return <Outlet />;
+export default function App({ loaderData }: Route.ComponentProps) {
+  console.log("loaderData", loaderData);
+
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        {/* Inject env before Scripts runs */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(loaderData.ENV)};`,
+          }}
+        />
+      </head>
+      <body>
+        <QueryClientProvider client={queryClient}>
+          <AppHeader>
+            <Outlet />
+          </AppHeader>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

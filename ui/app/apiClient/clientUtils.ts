@@ -2,8 +2,9 @@ import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient();
 
-const API_BASE_URL = import.meta.env.VITE_CAMP_API_DOMAIN;
-
+function getApiBaseUrl() {
+  return window.ENV.PUBLIC_API_URL;
+}
 export class APIError extends Error {
   status: number;
   data: any;
@@ -17,7 +18,7 @@ export class APIError extends Error {
 }
 
 export async function apiRequest(path: string, options = {}, headers = {}) {
-  const requestUrl = `${API_BASE_URL}${path}`;
+  const requestUrl = `${getApiBaseUrl()}${path}`;
 
   const res = await fetch(requestUrl, {
     credentials: "include",
