@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: appdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  camp_api:
+    build:
+      context: ./api
+    volumes:
+      - ./api:/app
+    working_dir: /app
+    command: sh -c "npx prisma migrate deploy && npm run dev"
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://user:password@db:5432/appdb?schema=public
+      NODE_ENV: development
+    depends_on:
+      - db
+
+volumes:
+  db-data:
