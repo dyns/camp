@@ -15,7 +15,11 @@ const srcDirname = path.dirname(__filename);
 const __dirname2 = path.dirname(srcDirname);
 
 fastify.register(fastifyCors, {
-  origin: ["localhost", "camp.vsqz.cloud"], // Your React/Vite UI origin
+  origin: [
+    "http://localhost:5173",
+    "http://camp_ui:5173",
+    "http://camp.vsqz.cloud",
+  ],
   credentials: true, // Allow cookies
   methods: ["GET", "HEAD", "POST", "PATCH", "DELETE"],
 });
