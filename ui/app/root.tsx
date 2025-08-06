@@ -91,6 +91,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
             __html: `window.ENV = ${JSON.stringify(loaderData.ENV)};`,
           }}
         />
+        <Links />
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
