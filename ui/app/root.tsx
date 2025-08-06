@@ -77,8 +77,6 @@ function AppHeader({ children }: { children: React.ReactNode }) {
 }
 
 export default function App({ loaderData }: Route.ComponentProps) {
-  console.log("loaderData", loaderData);
-
   return (
     <html lang="en">
       <head>
