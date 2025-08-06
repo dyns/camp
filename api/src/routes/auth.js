@@ -55,7 +55,7 @@ export default async function routes(fastify) {
       path: "/",
     });
 
-    return { success: true };
+    return { user: user };
   });
 
   fastify.post("/signin", async (request, reply) => {
