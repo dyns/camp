@@ -39,9 +39,6 @@ export function useSignInUser(
       queryClient.setQueryData(["auth", "user"], data.user);
     },
     onSettled: onSettled,
-    // onError: (err) => {
-    //   console.error(err);
-    // },
   });
 }
 
@@ -67,8 +64,19 @@ export function useUpdateCurrentUser() {
       // After login, optimistically update cached user data
       queryClient.setQueryData(["me"], data);
     },
-    // onError: (err) => {
-    //   console.error(err);
-    // },
+  });
+}
+
+export function useCreateUser() {
+  return useMutation({
+    mutationFn: (data: { email: string; name: string; password: string }) => {
+      return apiRequest("/auth/signup", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(["me"], data.user);
+    },
   });
 }
