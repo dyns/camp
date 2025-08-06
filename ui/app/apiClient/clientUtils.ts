@@ -5,6 +5,7 @@ export const queryClient = new QueryClient();
 function getApiBaseUrl() {
   return window.ENV.PUBLIC_API_URL;
 }
+
 export class APIError extends Error {
   status: number;
   data: any;
@@ -18,7 +19,16 @@ export class APIError extends Error {
 }
 
 export async function apiRequest(path: string, options = {}, headers = {}) {
-  const requestUrl = `${getApiBaseUrl()}${path}`;
+  return apiRequestLoader(getApiBaseUrl(), path, options, headers);
+}
+
+export async function apiRequestLoader(
+  baseURL: string,
+  path: string,
+  options = {},
+  headers = {}
+) {
+  const requestUrl = `${baseURL}${path}`;
 
   const res = await fetch(requestUrl, {
     credentials: "include",

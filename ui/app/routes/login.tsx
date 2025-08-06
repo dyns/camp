@@ -118,11 +118,7 @@ function LoginFormFields({
 function LoginFormFooter() {
   return (
     <div className="text-center mt-4">
-      <NavLink
-        type="button"
-        className="btn btn-link text-primary"
-        to="/create-account"
-      >
+      <NavLink type="button" className="btn btn-link text-primary" to="/signup">
         Don't have an account? Sign Up
       </NavLink>
     </div>

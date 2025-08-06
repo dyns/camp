@@ -7,12 +7,13 @@ import {
   ScrollRestoration,
   Link,
   useLocation,
+  redirect,
 } from "react-router";
 
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import { queryClient } from "./apiClient/clientUtils";
+import { queryClient, apiRequestLoader } from "./apiClient/clientUtils";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -30,14 +31,43 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export async function loader() {
-  const data = { ENV: { PUBLIC_API_URL: process.env.PUBLIC_API_URL } };
-  return data;
+function isPathNonAuthenticated(pathname: string) {
+  return pathname === "/signup" || pathname === "/";
+}
+
+export async function loader({ request }: Route.LoaderArgs) {
+  let userLoggedIn = false;
+
+  const url = new URL(request.url);
+  const pathname = url.pathname;
+
+  const PUBLIC_API_URL = process.env.PUBLIC_API_URL;
+
+  if (PUBLIC_API_URL) {
+    try {
+      await apiRequestLoader(
+        PUBLIC_API_URL,
+        "/users/me",
+        {},
+        { cookie: request.headers.get("Cookie") }
+      );
+
+      userLoggedIn = true;
+    } catch (error) {}
+  }
+
+  if (userLoggedIn || isPathNonAuthenticated(pathname)) {
+    const requiredClientEnvs = { ENV: { PUBLIC_API_URL } };
+    return requiredClientEnvs;
+  }
+
+  // redirect to login if required to be authenticated for current route
+  return redirect("/");
 }
 
 function AppHeader({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  const isLogin = location.pathname === "/";
+  const isLoginOrSignUp = isPathNonAuthenticated(location.pathname);
 
   const header = (
     <div className="flex items-center justify-end px-8 py-4 bg-white shadow-sm">
@@ -70,7 +100,7 @@ function AppHeader({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {isLogin ? null : header}
+      {isLoginOrSignUp ? null : header}
       {children}
     </>
   );
@@ -86,7 +116,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
         {/* Inject env before Scripts runs */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `window.ENV = ${JSON.stringify(loaderData.ENV)};`,
+            __html: `window.ENV = ${JSON.stringify(loaderData?.ENV)};`,
           }}
         />
         <Links />
