@@ -26,9 +26,7 @@ export function Category() {
   }
 }
 
-export function CategoryContent({ category }: { category: any }) {
-  console.log({ category });
-
+export function CategoryContent({ category }: { category: Category }) {
   const {
     modalRef: editTaskModalRef,
     setShowModal: setShowEditTaskModal,
@@ -150,7 +148,16 @@ export function CategoryContent({ category }: { category: any }) {
     updateCategory,
   }: {
     category: Category;
-    updateCategory: UseMutationResult;
+    updateCategory: UseMutationResult<
+      any,
+      Error,
+      {
+        id: number;
+        name?: string;
+        description?: string;
+      },
+      unknown
+    >;
   }) {
     const [editting, setEditting] = useState<{
       name: string;

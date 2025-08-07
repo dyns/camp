@@ -1,9 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "./clientUtils";
 
-export function useCreateTask(
-  onSettled: (data, error, variables, context) => void = () => {}
-) {
+export function useCreateTask() {
   return useMutation({
     mutationFn: (task: { name: string; categoryId: number }) => {
       return apiRequest(`/tasks`, {
@@ -22,16 +20,10 @@ export function useCreateTask(
         queryKey: [`category:${task.categoryId}`],
       });
     },
-    onSettled: onSettled,
-    // onError: (err) => {
-    //   console.error(err);
-    // },
   });
 }
 
-export function useUpdateTask(
-  onSettled: (data, error, variables, context) => void = () => {}
-) {
+export function useUpdateTask() {
   return useMutation({
     mutationFn: (task: { id: number; complete?: boolean; name?: string }) => {
       return apiRequest(`/tasks/${task.id}`, {
@@ -50,16 +42,10 @@ export function useUpdateTask(
         queryKey: [`category:${task.categoryId}`],
       });
     },
-    onSettled: onSettled,
-    // onError: (err) => {
-    //   console.error(err);
-    // },
   });
 }
 
-export function useDeleteTask(
-  onSettled: (data, error, variables, context) => void = () => {}
-) {
+export function useDeleteTask() {
   return useMutation({
     mutationFn: (id: number) => {
       return apiRequest(`/tasks/${id}`, {
@@ -78,9 +64,5 @@ export function useDeleteTask(
         queryKey: [`category:${task.categoryId}`],
       });
     },
-    onSettled: onSettled,
-    // onError: (err) => {
-    //   console.error(err);
-    // },
   });
 }

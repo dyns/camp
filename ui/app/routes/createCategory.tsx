@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useNavigate, useLocation } from "react-router";
 
 import { useCreateCategory } from "../apiClient/categories";
 import { useGetAllTrips } from "../apiClient/trips";
+
+import type { Trip } from "../types";
 
 type CategoryData = {
   name: string;
@@ -14,7 +16,8 @@ export default function CreateCategory() {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const defaultTripId = Number.parseInt(searchParams.get("tripId")) || null;
+  const defaultTripId =
+    Number.parseInt(searchParams.get("tripId") || "") || null;
 
   const mutateCategory = useCreateCategory();
 
@@ -35,7 +38,7 @@ export default function CreateCategory() {
 
   const trips = data.trips;
 
-  const handleOnSubmit = (event) => {
+  const handleOnSubmit = (event: FormEvent) => {
     event.preventDefault();
     console.log("form data:", { formData });
 
@@ -58,7 +61,9 @@ export default function CreateCategory() {
   };
 
   const handleFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -100,7 +105,7 @@ export default function CreateCategory() {
             <option value="" disabled>
               Select a trip
             </option>
-            {trips.map((trip) => (
+            {trips.map((trip: Trip) => (
               <option key={trip.id} value={trip.id}>
                 {trip.name}
               </option>

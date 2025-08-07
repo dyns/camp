@@ -11,8 +11,6 @@ export function useModal<T>() {
   });
 
   useLayoutEffect(() => {
-    // document.getElementById("my_modal_1").showModal();
-
     if (showModal.show) {
       // modal should be open
       if (!modalRef.current?.open) {

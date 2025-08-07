@@ -11,9 +11,7 @@ export function useGetCategory(id: number) {
   });
 }
 
-export function useCreateCategory(
-  onSettled: (data, error, variables, context) => void = () => {}
-) {
+export function useCreateCategory() {
   return useMutation({
     mutationFn: (category: {
       name: string;
@@ -31,16 +29,10 @@ export function useCreateCategory(
         queryKey: [`trip:${category.tripId}`],
       });
     },
-    onSettled: onSettled,
-    // onError: (err) => {
-    //   console.error(err);
-    // },
   });
 }
 
-export function useUpdateCategory(
-  onSettled: (data, error, variables, context) => void = () => {}
-) {
+export function useUpdateCategory() {
   return useMutation({
     mutationFn: (category: {
       id: number;
@@ -59,9 +51,5 @@ export function useUpdateCategory(
         queryKey: [`category:${category.id}`],
       });
     },
-    onSettled: onSettled,
-    // onError: (err) => {
-    //   console.error(err);
-    // },
   });
 }

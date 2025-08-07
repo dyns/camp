@@ -47,7 +47,6 @@ function TripPageContent({ data }) {
   const deleteTask = useDeleteTask();
 
   const deleteTaskHandler = (id: number) => {
-    // useDeleteTask
     deleteTask.mutate(id);
   };
 
