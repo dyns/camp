@@ -9,8 +9,9 @@ type Trip = {
   guests: { id: number; email: string }[];
 };
 
-type TripForm = Omit<Trip, "guests"> & {
+export type TripForm = Omit<Trip, "guests"> & {
   guestEmails: string[];
+  description: string;
 };
 
 export function TripDetailsForm({

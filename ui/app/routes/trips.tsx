@@ -1,9 +1,11 @@
 import { useGetAllTrips } from "../apiClient/trips";
 import { Link } from "react-router";
 
+import type { Trip } from "../types";
+
 export default function Trips() {
   const { isPending, isError, data, error } = useGetAllTrips();
-  const trips = data?.trips || [];
+  const trips: Trip[] = data?.trips || [];
 
   return (
     <div className="max-w-md mx-auto p-4">

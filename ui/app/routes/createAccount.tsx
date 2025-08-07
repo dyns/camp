@@ -35,7 +35,11 @@ export default function CreateAccount() {
 
               navigate("/trips");
             } catch (error) {
-              setErrorMessage(error?.message);
+              if (error instanceof Error) {
+                setErrorMessage(error?.message);
+              } else {
+                setErrorMessage("An error occurred");
+              }
             }
           } else {
             setErrorMessage("Please fill out all fields");

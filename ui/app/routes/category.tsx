@@ -1,10 +1,14 @@
-import type { Route } from "./+types/home";
+import type { Route } from "./+types/category";
 import { Category } from "../category/category";
 
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Category Name here" },
-    { name: "description", content: "This is a category like items to bring, or more narrowly smores items, or reservation planning, or location finding" },
+    {
+      name: "description",
+      content:
+        "This is a category like items to bring, or more narrowly smores items, or reservation planning, or location finding",
+    },
   ];
 }
 

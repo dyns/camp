@@ -2,9 +2,11 @@ import { useState } from "react";
 import { redirect, NavLink, useNavigate } from "react-router";
 import { useSignInUser, getCurrentUser } from "../apiClient/user";
 
+import type { Route } from "./+types/login";
+
 const ACTIVE_USER_REDIRECT = "/trips";
 
-export async function loader({ request }) {
+export async function loader({ request }: Route.LoaderArgs) {
   const cookie = request.headers.get("cookie") ?? "";
   try {
     const currentUser = await getCurrentUser({}, { Cookie: cookie });
@@ -22,11 +24,7 @@ export default function LogInPage() {
 
 function LoginForm() {
   const navigate = useNavigate();
-  const { mutate, isPending, isError, error } = useSignInUser((data, error) => {
-    if (!error) {
-      navigate(ACTIVE_USER_REDIRECT);
-    }
-  });
+  const { mutate, isPending, isError, error } = useSignInUser();
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,10 +33,19 @@ function LoginForm() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    mutate({
-      email: formData.email,
-      password: formData.password,
-    });
+    mutate(
+      {
+        email: formData.email,
+        password: formData.password,
+      },
+      {
+        onSettled: (data, error) => {
+          if (!error) {
+            navigate(ACTIVE_USER_REDIRECT);
+          }
+        },
+      }
+    );
   };
 
   return (

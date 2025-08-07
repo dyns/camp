@@ -1,6 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "./clientUtils";
 
+import type { Trip } from "../types";
+
 export async function getAllTrips() {
   return await apiRequest("/trips");
 }
@@ -32,7 +34,7 @@ export function useCreateTrip() {
     mutationFn: (trip: {
       name: string;
       description: string;
-      startDate: Date;
+      startDate: string;
       guestEmails: string[];
     }) => {
       return apiRequest(`/trips`, {
@@ -64,7 +66,7 @@ export function useGetAllTrips() {
 }
 
 export function useGetTrip(tripId: Number) {
-  return useQuery({
+  return useQuery<{ trip: Trip }>({
     retry: false,
     queryKey: [`trip:${tripId}`],
     queryFn: async () => {
@@ -73,15 +75,13 @@ export function useGetTrip(tripId: Number) {
   });
 }
 
-export function useUpdateTrip(
-  onSettled: (data, error, variables, context) => void = () => {}
-) {
+export function useUpdateTrip() {
   return useMutation({
     mutationFn: (trip: {
       id: number;
       name?: string;
       description?: string;
-      startDate?: Date;
+      startDate?: string;
       guestEmails?: string[];
     }) => {
       return apiRequest(`/trips/${trip.id}`, {
@@ -96,9 +96,5 @@ export function useUpdateTrip(
         queryKey: [`trip:${trip.id}`],
       });
     },
-    onSettled: onSettled,
-    // onError: (err) => {
-    //   console.error(err);
-    // },
   });
 }

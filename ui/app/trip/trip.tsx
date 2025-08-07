@@ -7,7 +7,7 @@ import { Modal, useModal } from "../components/modal";
 import { EditTaskModal } from "../components/EditTaskModal";
 import { AddTaskModal } from "../components/AddTaskModal";
 
-import type { Task, Category } from "~/types";
+import type { Task, Trip } from "~/types";
 
 import { useGetTrip } from "../apiClient/trips";
 import { useUpdateTask, useCreateTask, useDeleteTask } from "../apiClient/task";
@@ -19,7 +19,7 @@ export function TripPage() {
   const { data, error } = useGetTrip(defaultTripId);
 
   if (data && defaultTripId) {
-    return <TripPageContent data={data} />;
+    return <TripPageContent trip={data.trip} />;
   } else if (error) {
     return "Error";
   } else {
@@ -27,20 +27,8 @@ export function TripPage() {
   }
 }
 
-function TripPageContent({ data }) {
-  // const {
-  //   categories,
-  //   addTaskToCategory,
-  //   toggleTaskCompletion,
-  //   updateTask,
-  //   deleteTask,
-  // } = useCategoriesFake();
-
-  const trip = data.trip;
-
-  console.log("trip data", data);
-
-  const categories = data?.trip?.categories || [];
+function TripPageContent({ trip }: { trip: Trip }) {
+  const categories = trip.categories || [];
 
   const mutateTask = useUpdateTask();
   const createTask = useCreateTask();
@@ -79,10 +67,6 @@ function TripPageContent({ data }) {
   } = useModal<Task>();
 
   const maxGlanceTaskLength = 3;
-
-  if (!data) {
-    return "loading";
-  }
 
   return (
     <main className="flex flex-col min-h-screen bg-base-200">
@@ -195,139 +179,4 @@ function TripPageContent({ data }) {
       </div>
     </main>
   );
-}
-
-export function useCategoriesFake() {
-  const defaultCategories: Category[] = [
-    {
-      id: crypto.randomUUID(),
-      name: "Pre Trip",
-      tasks: [
-        { name: "Pick location", complete: true, id: crypto.randomUUID() },
-        { name: "Settle on date", complete: false, id: crypto.randomUUID() },
-      ],
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "Supplies",
-      tasks: [
-        { name: "firewood", complete: false, id: crypto.randomUUID() },
-        { name: "large water jugs", complete: false, id: crypto.randomUUID() },
-        { name: "smores", complete: false, id: crypto.randomUUID() },
-        { name: "hot dog sticks", complete: false, id: crypto.randomUUID() },
-      ],
-    },
-    {
-      name: "Travel",
-      id: crypto.randomUUID(),
-      tasks: [
-        {
-          name: "figure out carpooling",
-          complete: false,
-          id: crypto.randomUUID(),
-        },
-      ],
-    },
-    {
-      name: "On-Site",
-      id: crypto.randomUUID(),
-
-      tasks: [
-        { name: "hike 10 miles", complete: false, id: crypto.randomUUID() },
-        { name: "tip a cow", complete: false, id: crypto.randomUUID() },
-      ],
-    },
-  ];
-
-  const [state, setState] = useState(() => {
-    return defaultCategories.map((category) => {
-      return {
-        ...category,
-        tasks: category.tasks.toSorted((task1, task2) => {
-          if (task1.complete === task2.complete) {
-            return 0;
-          } else {
-            return task1.complete ? 1 : -1;
-          }
-        }),
-      };
-    });
-  });
-
-  function toggleTaskCompletion(taskId: string, completed: boolean) {
-    console.log("toggleTaskCompletion api", { taskId, completed });
-    setState((oldState) =>
-      oldState.map((category) => {
-        return {
-          ...category,
-          tasks: category.tasks.map((task) => {
-            if (task.id === taskId) {
-              return { ...task, complete: !task.complete };
-            }
-            return { ...task };
-          }),
-        };
-      })
-    );
-  }
-
-  function addTaskToCategory(categoryId: string, taskText: string) {
-    console.log("addTaskToCategory api", { categoryId, taskText });
-    setState((oldState) => {
-      return oldState.map((a) => {
-        if (a.name === categoryId) {
-          return {
-            ...a,
-            tasks: [
-              { name: taskText, complete: false, id: crypto.randomUUID() },
-              ...a.tasks,
-            ],
-          };
-        }
-        return { ...a, tasks: [...a.tasks] };
-      });
-    });
-  }
-
-  function updateTask(updateTask: Task) {
-    console.log("update task api", updateTask);
-
-    setState((oldState) =>
-      oldState.map((category) => {
-        return {
-          ...category,
-          tasks: category.tasks.map((task) => {
-            if (task.id === updateTask.id) {
-              return {
-                ...updateTask,
-              };
-            }
-            return { ...task };
-          }),
-        };
-      })
-    );
-  }
-
-  function deleteTask(taskId: string) {
-    setState((oldState) =>
-      oldState.map((category) => {
-        return {
-          ...category,
-          tasks: category.tasks.filter((task) => {
-            return task.id != taskId;
-          }),
-        };
-      })
-    );
-  }
-
-  return {
-    categories: state,
-    setCategories: setState,
-    addTaskToCategory,
-    toggleTaskCompletion,
-    updateTask,
-    deleteTask,
-  };
 }

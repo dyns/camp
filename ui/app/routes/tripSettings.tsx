@@ -4,6 +4,9 @@ import { useParams, useNavigate } from "react-router";
 import { useGetTrip, useUpdateTrip, useDeleteTrip } from "../apiClient/trips";
 
 import { TripDetailsForm } from "../components/TripDetailsForm";
+import type { TripForm } from "../components/TripDetailsForm";
+
+import type { Trip } from "../types";
 
 export default function TripSettings() {
   const { id: idParam } = useParams();
@@ -20,9 +23,10 @@ export default function TripSettings() {
     return "loading";
   } else if (error) {
     return `error: ${error.message}`;
+  } else if (data === undefined) {
+    return "Error: Unable to load Trip Settings";
   }
 
-  console.log("trip settings data", { data });
   return (
     <div>
       <UpdateTripForm trip={data.trip} />
@@ -30,10 +34,10 @@ export default function TripSettings() {
   );
 }
 
-function UpdateTripForm({ trip }) {
+function UpdateTripForm({ trip }: { trip: Trip }) {
   const updateTrip = useUpdateTrip();
 
-  const onTripSubmit = (tripForm) => {
+  const onTripSubmit = (tripForm: TripForm) => {
     updateTrip.mutate({ ...tripForm, id: trip.id });
   };
 

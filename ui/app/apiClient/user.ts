@@ -20,9 +20,7 @@ export async function signOut() {
   });
 }
 
-export function useSignInUser(
-  onSettled: (data, error, variables, context) => void = () => {}
-) {
+export function useSignInUser() {
   return useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) => {
       return apiRequest("/auth/signin", {
@@ -38,7 +36,6 @@ export function useSignInUser(
       console.log("User logged in successfully:", { data });
       queryClient.setQueryData(["auth", "user"], data.user);
     },
-    onSettled: onSettled,
   });
 }
 
