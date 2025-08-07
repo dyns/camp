@@ -1,4 +1,6 @@
 import { prisma } from "../lib/prisma.js";
+
+import { hashPass, comparePass } from "../lib/utils.js";
 import {
   SESSION_COOKIE_NAME,
   createUserSessionCookie,
@@ -17,16 +19,16 @@ export default async function routes(fastify) {
   });
 
   fastify.post("/signup", async (request, reply) => {
-    const { password } = request.body;
+    const { password: plainTextPassword } = request.body;
     let { name, email } = request.body;
     name = name?.trim();
     email = email?.trim();
     if (
       !name ||
-      !password ||
+      !plainTextPassword ||
       !email ||
       name.trim() === "" ||
-      password.trim() === "" ||
+      plainTextPassword.trim() === "" ||
       email.trim() === ""
     ) {
       return reply.status(400).send({
@@ -35,12 +37,14 @@ export default async function routes(fastify) {
       });
     }
 
-    if (name.length < 3 || password.length < 3) {
+    if (name.length < 3 || plainTextPassword.length < 3) {
       return reply.status(400).send({
         error:
           "Name must be at least 3 characters and password at least 6 characters",
       });
     }
+
+    const password = await hashPass(plainTextPassword);
 
     const user = await prisma.user.create({
       data: { name, password, email },
@@ -59,7 +63,7 @@ export default async function routes(fastify) {
   });
 
   fastify.post("/signin", async (request, reply) => {
-    const { email, password } = request.body;
+    const { email, password: plainTextPass } = request.body;
 
     // Find user
     const user = await prisma.user.findUnique({
@@ -71,7 +75,7 @@ export default async function routes(fastify) {
     }
 
     // Validate password
-    const isPasswordValid = password === user.password;
+    const isPasswordValid = await comparePass(plainTextPass, user.password);
 
     if (!isPasswordValid) {
       return reply.status(401).send({ error: "Invalid credentials" });

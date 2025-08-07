@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import path from "path";
 import { fileURLToPath } from "url";
 import fastifyCors from "@fastify/cors";
@@ -14,12 +15,12 @@ const __filename = fileURLToPath(import.meta.url); // get the resolved path to t
 const srcDirname = path.dirname(__filename);
 const __dirname2 = path.dirname(srcDirname);
 
+dotenv.config();
+
+const { ALLOWED_CORS_URL } = process.env;
+
 fastify.register(fastifyCors, {
-  origin: [
-    "http://localhost:5173",
-    "http://camp_ui:5173",
-    "http://camp.vsqz.cloud",
-  ],
+  origin: ALLOWED_CORS_URL,
   credentials: true, // Allow cookies
   methods: ["GET", "HEAD", "POST", "PATCH", "DELETE"],
 });
