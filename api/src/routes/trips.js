@@ -54,6 +54,7 @@ export default async function routes(fastify) {
             },
           },
           guests: true,
+          owners: true,
         },
       });
 
