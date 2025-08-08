@@ -1,15 +1,12 @@
 import { useState } from "react";
 
 import { getUserByEmail } from "../apiClient/user";
+import type { TripResponse } from "../types";
 
-type Trip = {
-  name: string;
-  description?: string;
-  startDate: string;
-  guests: { id: number; email: string }[];
-};
-
-export type TripForm = Omit<Trip, "guests"> & {
+export type TripForm = Omit<
+  TripResponse,
+  "guests" | "id" | "categories" | "owners"
+> & {
   guestEmails: string[];
   description: string;
 };
@@ -18,7 +15,7 @@ export function TripDetailsForm({
   trip,
   onSubmit,
 }: {
-  trip: Trip | null;
+  trip: TripResponse | null;
   onSubmit: (trip: TripForm) => void;
 }) {
   const date = trip?.startDate ? new Date(trip.startDate) : new Date();
@@ -162,7 +159,15 @@ export function TripDetailsForm({
           className="block mb-1 font-bold text-black text-sm"
           htmlFor="inviteEmail"
         >
-          Invite a friend
+          Invite a friend{" "}
+          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full border border-black ml-1 text-xs relative group cursor-help">
+            ?
+            <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 w-48 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              Invite friends to join your trip. Here are some test emails you
+              can add: dave@dave.com, jane@jane.com, john@john.com,
+              mary@mary.com
+            </span>
+          </span>
         </label>
         <div className="flex gap-2">
           <input

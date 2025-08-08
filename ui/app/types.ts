@@ -1,5 +1,20 @@
 export type Task = { name: string; complete: boolean; id: number };
 
+export type User = {
+  id: number;
+  email: string;
+};
+
+export type TripResponse = {
+  id: number;
+  description?: string;
+  name: string;
+  startDate: string;
+  guests: { id: number; email: string }[];
+  categories: Category[];
+  owners: { id: number; email: string }[];
+};
+
 export type Trip = {
   id: number;
   name: string;

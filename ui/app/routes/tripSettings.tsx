@@ -2,13 +2,17 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
 
 import { useGetTrip, useUpdateTrip, useDeleteTrip } from "../apiClient/trips";
+import { useCurrentUser } from "../apiClient/user";
 
 import { TripDetailsForm } from "../components/TripDetailsForm";
 import type { TripForm } from "../components/TripDetailsForm";
 
-import type { Trip } from "../types";
+import type { TripResponse, User } from "../types";
 
 export default function TripSettings() {
+  const { data: userResponse, isLoading: isUserLoading } = useCurrentUser();
+  const user = userResponse?.user;
+
   const { id: idParam } = useParams();
 
   const tripId = Number(idParam);
@@ -17,34 +21,38 @@ export default function TripSettings() {
     return "Error";
   }
 
-  const { data, isLoading, error } = useGetTrip(tripId);
+  const { data, isLoading: isTripLoading, error } = useGetTrip(tripId);
 
-  if (isLoading) {
+  if (isTripLoading || isUserLoading) {
     return "loading";
   } else if (error) {
     return `error: ${error.message}`;
-  } else if (data === undefined) {
+  } else if (data === undefined || user === undefined) {
     return "Error: Unable to load Trip Settings";
   }
 
   return (
     <div>
-      <UpdateTripForm trip={data.trip} />
+      <UpdateTripForm trip={data.trip} user={user} />
     </div>
   );
 }
 
-function UpdateTripForm({ trip }: { trip: Trip }) {
+function UpdateTripForm({ trip, user }: { trip: TripResponse; user: User }) {
   const updateTrip = useUpdateTrip();
+  const navigate = useNavigate();
+
+  const isUserOwner = trip.owners.some((owner) => owner.email === user.email);
 
   const onTripSubmit = (tripForm: TripForm) => {
     updateTrip.mutate({ ...tripForm, id: trip.id });
+    navigate(`/trips/${trip.id}`);
   };
 
   return (
     <div>
       <TripDetailsForm trip={trip} onSubmit={onTripSubmit} />
-      <DeleteTripFooter tripId={trip.id} />
+      {isUserOwner && <DeleteTripFooter tripId={trip.id} />}
     </div>
   );
 }

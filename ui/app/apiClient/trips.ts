@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "./clientUtils";
 
-import type { Trip } from "../types";
+import type { TripResponse } from "../types";
 
 export async function getAllTrips() {
   return await apiRequest("/trips");
@@ -49,9 +49,6 @@ export function useCreateTrip() {
         queryKey: [`trip:${trip.id}`],
       });
     },
-    // onError: (err) => {
-    //   console.error(err);
-    // },
   });
 }
 
@@ -66,7 +63,7 @@ export function useGetAllTrips() {
 }
 
 export function useGetTrip(tripId: Number) {
-  return useQuery<{ trip: Trip }>({
+  return useQuery<{ trip: TripResponse }>({
     retry: false,
     queryKey: [`trip:${tripId}`],
     queryFn: async () => {
