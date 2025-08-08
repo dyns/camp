@@ -146,7 +146,7 @@ function TripPageContent({ trip }: { trip: Trip }) {
                       .slice(0, maxGlanceTaskLength)
                       .map((task) => (
                         <li
-                          key={task.name}
+                          key={task.id}
                           className={`list-row px-4 py-2 flex items-center ${
                             task.complete ? "line-through text-gray-400" : ""
                           }`}
