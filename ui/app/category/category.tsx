@@ -37,7 +37,6 @@ export function CategoryContent({ category }: { category: Category }) {
   const deleteTask = useDeleteTask();
 
   const updateTask = (task: Task) => {
-    console.log("updateTask called", { task });
     mutateTask.mutate({
       id: task.id,
       complete: task.complete,
@@ -46,8 +45,6 @@ export function CategoryContent({ category }: { category: Category }) {
   };
 
   const updateTaskCompletion = (taskId: number, completed: boolean) => {
-    console.log("updateTaskCompletion called", { taskId, completed });
-
     mutateTask.mutate({
       id: taskId,
       complete: completed,
@@ -55,7 +52,6 @@ export function CategoryContent({ category }: { category: Category }) {
   };
 
   const deleteTaskHandler = (taskId: number) => {
-    console.log("delete task called", { taskId });
     deleteTask.mutate(taskId);
   };
 
@@ -72,78 +68,7 @@ export function CategoryContent({ category }: { category: Category }) {
     createTask.mutate({ categoryId: categoryId, name: taskText });
   };
 
-  return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center py-8">
-      <EditTaskModal
-        modalRef={editTaskModalRef}
-        showModal={showEditTaskModal}
-        setShowModal={setShowEditTaskModal}
-        updateTask={updateTask}
-        deleteTask={deleteTaskHandler}
-      />
-      <AddTaskModal
-        addTaskToCategory={handleCreateTask}
-        modalRef={addTaskModalRef}
-        showModal={showAddTaskModal}
-        setShowModal={setShowAddTaskModal}
-      />
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-xl p-8 relative">
-        {/* Trip name floating above title */}
-        <div className="absolute -top-6 left-4 bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-semibold shadow">
-          <Link to={`/trips/${category.trip.id}`}>
-            Trip: {category.trip.name}
-          </Link>
-        </div>
-        <div className="mb-6">
-          <EditName category={category} updateCategory={updateCategory} />
-        </div>
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xl font-semibold text-gray-700">Tasks</h2>
-            <button
-              type="button"
-              className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow ml-2"
-              style={{ minWidth: "80px" }}
-              onClick={() => {
-                setShowAddTaskModal({
-                  show: true,
-                  data: category.id,
-                });
-              }}
-            >
-              Add
-            </button>
-          </div>
-          <div className="bg-gray-50 rounded-lg border border-gray-200">
-            <ul className="divide-y divide-gray-200">
-              {category.uncompletedTasks.map((task: Task) => (
-                <li key={task.id} className="px-4 py-3 flex items-center">
-                  {/* <span className="text-gray-800">{task.name}</span> */}
-                  <TaskRow task={task} completeToggled={updateTaskCompletion} />
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <h2 className="text-xl font-semibold mb-2 text-gray-700 mt-4">
-            Completed Tasks
-          </h2>
-          <div className="bg-gray-50 rounded-lg border border-gray-200">
-            <ul className="divide-y divide-gray-200">
-              {category.completedTasks.map((task: Task) => (
-                <li key={task.id} className="px-4 py-3 flex items-center">
-                  {/* <span className="text-gray-800">{task.name}</span> */}
-                  <TaskRow task={task} completeToggled={updateTaskCompletion} />
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  function EditName({
+  const EditName = ({
     category,
     updateCategory,
   }: {
@@ -158,7 +83,7 @@ export function CategoryContent({ category }: { category: Category }) {
       },
       unknown
     >;
-  }) {
+  }) => {
     const [editting, setEditting] = useState<{
       name: string;
       description?: string;
@@ -274,15 +199,15 @@ export function CategoryContent({ category }: { category: Category }) {
         )}
       </>
     );
-  }
+  };
 
-  function TaskRow({
+  const TaskRow = ({
     task,
     completeToggled,
   }: {
     task: { id: number; name: string; complete: boolean };
     completeToggled: (id: number, completed: boolean) => void;
-  }) {
+  }) => {
     return (
       <div
         style={{ width: "100%" }}
@@ -314,5 +239,76 @@ export function CategoryContent({ category }: { category: Category }) {
         />
       </div>
     );
-  }
+  };
+
+  return (
+    <div className="min-h-screen bg-base-200 flex items-center justify-center py-8">
+      <EditTaskModal
+        modalRef={editTaskModalRef}
+        showModal={showEditTaskModal}
+        setShowModal={setShowEditTaskModal}
+        updateTask={updateTask}
+        deleteTask={deleteTaskHandler}
+      />
+      <AddTaskModal
+        addTaskToCategory={handleCreateTask}
+        modalRef={addTaskModalRef}
+        showModal={showAddTaskModal}
+        setShowModal={setShowAddTaskModal}
+      />
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-xl p-8 relative">
+        {/* Trip name floating above title */}
+        <div className="absolute -top-6 left-4 bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-semibold shadow">
+          <Link to={`/trips/${category.trip.id}`}>
+            Trip: {category.trip.name}
+          </Link>
+        </div>
+        <div className="mb-6">
+          <EditName category={category} updateCategory={updateCategory} />
+        </div>
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-xl font-semibold text-gray-700">Tasks</h2>
+            <button
+              type="button"
+              className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow ml-2"
+              style={{ minWidth: "80px" }}
+              onClick={() => {
+                setShowAddTaskModal({
+                  show: true,
+                  data: category.id,
+                });
+              }}
+            >
+              Add
+            </button>
+          </div>
+          <div className="bg-gray-50 rounded-lg border border-gray-200">
+            <ul className="divide-y divide-gray-200">
+              {category.uncompletedTasks.map((task: Task) => (
+                <li key={task.id} className="px-4 py-3 flex items-center">
+                  {/* <span className="text-gray-800">{task.name}</span> */}
+                  <TaskRow task={task} completeToggled={updateTaskCompletion} />
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <h2 className="text-xl font-semibold mb-2 text-gray-700 mt-4">
+            Completed Tasks
+          </h2>
+          <div className="bg-gray-50 rounded-lg border border-gray-200">
+            <ul className="divide-y divide-gray-200">
+              {category.completedTasks.map((task: Task) => (
+                <li key={task.id} className="px-4 py-3 flex items-center">
+                  {/* <span className="text-gray-800">{task.name}</span> */}
+                  <TaskRow task={task} completeToggled={updateTaskCompletion} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
