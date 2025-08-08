@@ -40,7 +40,6 @@ export default function CreateCategory() {
 
   const handleOnSubmit = (event: FormEvent) => {
     event.preventDefault();
-    console.log("form data:", { formData });
 
     if (formData.tripId == null) {
       return;

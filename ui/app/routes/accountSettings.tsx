@@ -12,9 +12,7 @@ import { queryClient } from "../apiClient/clientUtils";
 export default function AccountSettingsData() {
   const { data, isLoading, error } = useCurrentUser();
   const navigate = useNavigate();
-  // const [] = useState();
 
-  console.log("account settings", data);
   if (isLoading) {
     return "Loading";
   } else if (error) {

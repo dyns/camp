@@ -33,7 +33,6 @@ export function useSignInUser() {
     },
     onSuccess: (data) => {
       // After login, optimistically update cached user data
-      console.log("User logged in successfully:", { data });
       queryClient.setQueryData(["auth", "user"], data.user);
     },
   });

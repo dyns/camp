@@ -57,7 +57,6 @@ export function EditTaskModal({
 
   function handleUpdate() {
     if (isEmpty) return;
-    console.log("api edit task", { editText, isComplete });
 
     if (showModal.data) {
       updateTask({

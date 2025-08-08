@@ -30,7 +30,6 @@ fastify.register(import("@fastify/multipart"));
 fastify.register(import("@fastify/cookie"));
 
 const staticPath = path.join(__dirname2, "uploads");
-console.log({ staticPath });
 // serve static files
 fastify.register(import("@fastify/static"), {
   root: path.join(__dirname2, "uploads"),

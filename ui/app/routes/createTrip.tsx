@@ -9,7 +9,6 @@ export default function CreateTrip() {
   const navigate = useNavigate();
 
   const handleSaveTrip = async (tripData: TripForm) => {
-    console.log("create new trip", tripData);
     const data = await createTrip.mutateAsync(tripData);
     navigate(`/trips/${data.trip.id}`);
   };
