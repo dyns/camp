@@ -26,7 +26,6 @@ export default async function routes(fastify) {
       },
     });
 
-    console.log("trips prisma", JSON.stringify(trips));
     return { trips };
   });
 
