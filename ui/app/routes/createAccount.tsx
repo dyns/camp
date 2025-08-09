@@ -9,7 +9,7 @@ export default function CreateAccount() {
   const [errorMessage, setErrorMessage] = useState("");
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-base-200">
+    <div className="flex items-center justify-center min-h-screen">
       <form
         action={async (formData) => {
           setErrorMessage("");
@@ -45,24 +45,32 @@ export default function CreateAccount() {
             setErrorMessage("Please fill out all fields");
           }
         }}
-        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md space-y-6"
+        className="bg-white/95 w-full max-w-md border border-black p-8 space-y-6 rounded-lg shadow-[2px_2px_0_#222]"
       >
-        <h2 className="text-2xl font-bold text-center mb-4">Sign Up</h2>
+        <h2 className="text-4xl font-extrabold text-left mb-6 leading-tight text-black">
+          Sign Up
+        </h2>
         <div>
-          <label className="block mb-1 font-semibold" htmlFor="nickname">
-            Nickname
+          <label
+            className="block mb-1 font-bold text-black text-lg"
+            htmlFor="name"
+          >
+            Name
           </label>
           <input
             id="name"
             name="name"
             type="text"
             required
-            className="input input-bordered w-full"
+            className="w-full px-4 py-3 border border-black bg-white text-black text-base rounded-lg shadow-[2px_2px_0_#222]"
             placeholder="Enter your name"
           />
         </div>
         <div>
-          <label className="block mb-1 font-semibold" htmlFor="email">
+          <label
+            className="block mb-1 font-bold text-black text-lg"
+            htmlFor="email"
+          >
             Email
           </label>
           <input
@@ -70,28 +78,34 @@ export default function CreateAccount() {
             name="email"
             type="email"
             required
-            className="input input-bordered w-full"
+            className="w-full px-4 py-3 border border-black bg-white text-black text-base rounded-lg shadow-[2px_2px_0_#222]"
             placeholder="Enter your email"
           />
         </div>
         <div>
-          <label className="block mb-1 font-semibold" htmlFor="password">
+          <label
+            className="block mb-1 font-bold text-black text-lg"
+            htmlFor="password"
+          >
             Password
           </label>
           <input
             id="password"
             name="password"
-            type="text"
+            type="password"
             required
-            className="input input-bordered w-full"
+            className="w-full px-4 py-3 border border-black bg-white text-black text-base rounded-lg shadow-[2px_2px_0_#222]"
             placeholder="Enter your password"
           />
         </div>
-        <button type="submit" className="btn btn-primary w-full mt-4">
+        <button
+          type="submit"
+          className="w-full mt-4 px-6 py-3 border border-black bg-green-200 hover:bg-green-300 text-black font-bold rounded-lg shadow-[2px_2px_0_#222] transition-[background,transform] duration-100 active:translate-x-0.5 active:translate-y-0.5"
+        >
           Create Account
         </button>
         {errorMessage ? (
-          <p className="text-red-600">Error: {errorMessage}</p>
+          <p className="text-red-500 mt-2">Error: {errorMessage}</p>
         ) : null}
       </form>
     </div>
