@@ -27,7 +27,7 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-function isPathNonAuthenticated(pathname: string) {
+function isPathOnlyUnauthenticated(pathname: string) {
   return pathname === "/signup" || pathname === "/";
 }
 
@@ -52,7 +52,9 @@ export async function loader({ request }: Route.LoaderArgs) {
     } catch (error) {}
   }
 
-  if (userLoggedIn || isPathNonAuthenticated(pathname)) {
+  if (userLoggedIn && isPathOnlyUnauthenticated(pathname)) {
+    return redirect("/trips");
+  } else if (userLoggedIn || isPathOnlyUnauthenticated(pathname)) {
     const requiredClientEnvs = { ENV: { PUBLIC_API_URL } };
     return requiredClientEnvs;
   }
@@ -63,7 +65,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 function AppHeader({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  const isLoginOrSignUp = isPathNonAuthenticated(location.pathname);
+  const isLoginOrSignUp = isPathOnlyUnauthenticated(location.pathname);
 
   const header = (
     <div className="flex items-center justify-between px-8 py-4 bg-white shadow-sm">

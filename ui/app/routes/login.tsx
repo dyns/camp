@@ -1,18 +1,8 @@
 import { useState } from "react";
-import { redirect, NavLink, useNavigate } from "react-router";
-import { useSignInUser, getCurrentUser } from "../apiClient/user";
-
-import type { Route } from "./+types/login";
+import { NavLink, useNavigate } from "react-router";
+import { useSignInUser } from "../apiClient/user";
 
 const ACTIVE_USER_REDIRECT = "/trips";
-
-export async function loader({ request }: Route.LoaderArgs) {
-  const cookie = request.headers.get("cookie") ?? "";
-  try {
-    await getCurrentUser({}, { Cookie: cookie });
-    return redirect(ACTIVE_USER_REDIRECT);
-  } catch (error) {}
-}
 
 export default function LogInPage() {
   return (
