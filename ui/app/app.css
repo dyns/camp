@@ -11,8 +11,9 @@
 html,
 body {
   /* @apply bg-white; */
-  background-image: url("../public/mountain_background.jpeg");
+  /* background-image: url("../public/mountain_background.jpeg"); */
+  background-image: url("../public/mountains.svg");
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: center bottom;
   background-size: cover;
 }

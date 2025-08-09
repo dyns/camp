@@ -9,14 +9,14 @@ const ACTIVE_USER_REDIRECT = "/trips";
 export async function loader({ request }: Route.LoaderArgs) {
   const cookie = request.headers.get("cookie") ?? "";
   try {
-    const currentUser = await getCurrentUser({}, { Cookie: cookie });
+    await getCurrentUser({}, { Cookie: cookie });
     return redirect(ACTIVE_USER_REDIRECT);
   } catch (error) {}
 }
 
 export default function LogInPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-base-200">
+    <div className="flex items-center justify-center min-h-screen">
       <LoginForm />
     </div>
   );
@@ -49,7 +49,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md space-y-6">
+    <div className="bg-white/95 w-full max-w-md border border-black p-8 space-y-6 rounded-lg shadow-[2px_2px_0_#222]">
       {isPending ? (
         "Loading..."
       ) : (
@@ -84,9 +84,14 @@ function LoginFormFields({
 }: LoginFormFieldsProps) {
   return (
     <form onSubmit={onSubmit}>
-      <h2 className="text-2xl font-bold text-center mb-4">Sign In</h2>
+      <h2 className="text-4xl font-extrabold text-left mb-6 leading-tight text-black">
+        Sign In
+      </h2>
       <div>
-        <label className="block mb-1 font-semibold" htmlFor="email">
+        <label
+          className="block mb-1 font-bold text-black text-lg"
+          htmlFor="email"
+        >
           Email
         </label>
         <input
@@ -94,14 +99,17 @@ function LoginFormFields({
           name="email"
           type="email"
           required
-          className="input input-bordered w-full focus:invalid:border-red-500"
+          className="w-full px-4 py-3 border border-black bg-white text-black text-base rounded-lg shadow-[2px_2px_0_#222]"
           placeholder="Enter your email"
           value={formData.email}
           onChange={onChange}
         />
       </div>
       <div>
-        <label className="block mb-1 font-semibold" htmlFor="password">
+        <label
+          className="block mb-1 font-bold text-black text-lg"
+          htmlFor="password"
+        >
           Password
         </label>
         <input
@@ -109,13 +117,16 @@ function LoginFormFields({
           name="password"
           type="password"
           required
-          className="input input-bordered w-full"
+          className="w-full px-4 py-3 border border-black bg-white text-black text-base rounded-lg shadow-[2px_2px_0_#222]"
           placeholder="Enter your password"
           value={formData.password}
           onChange={onChange}
         />
       </div>
-      <button type="submit" className="btn btn-primary w-full mt-4">
+      <button
+        type="submit"
+        className="w-full mt-4 px-6 py-3 border border-black bg-green-200 hover:bg-green-300 text-black font-bold rounded-lg shadow-[2px_2px_0_#222] transition-[background,transform] duration-100 active:translate-x-0.5 active:translate-y-0.5"
+      >
         Sign In
       </button>
     </form>
@@ -125,7 +136,11 @@ function LoginFormFields({
 function LoginFormFooter() {
   return (
     <div className="text-center mt-4">
-      <NavLink type="button" className="btn btn-link text-primary" to="/signup">
+      <NavLink
+        type="button"
+        className="text-blue-600 hover:underline font-medium"
+        to="/signup"
+      >
         Don't have an account? Sign Up
       </NavLink>
     </div>
