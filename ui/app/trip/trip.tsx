@@ -69,25 +69,24 @@ function TripPageContent({ trip }: { trip: Trip }) {
   const maxGlanceTaskLength = 3;
 
   return (
-    <main className="flex flex-col min-h-screen bg-base-200">
-      {/* Top bar with user preferences icon */}
-
-      <div className="flex-1 flex flex-col items-center gap-10 min-h-0 bg-base-200 px-4 pb-8">
-        <h1 className="text-3xl font-bold mt-8 mb-2">Let's go outside 🏔️</h1>
-        <div className="flex items-center justify-between w-full max-w-2xl mb-2">
-          <h2 className="text-xl font-semibold">{trip.name}</h2>
+    <main className="min-h-screen">
+      <div className="max-w-2xl mx-auto p-4 bg-white">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-extrabold text-black mb-4">
+            {trip.name}
+          </h1>
           <Link
             to={`/trip-settings/${trip.id}`}
-            className="btn btn-primary btn-sm ml-4"
+            className="px-3 py-2 border border-black bg-green-200 hover:bg-green-300 text-black font-bold rounded-lg shadow-[2px_2px_0_#222] transition-colors"
           >
             Trip Preferences
           </Link>
         </div>
-        <div className="flex items-center justify-between w-full max-w-2xl mb-2">
-          <h2 className="text-xl font-semibold">Categories:</h2>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-xl font-semibold text-black">Categories</h2>
           <Link
             to={{ pathname: "/create-category", search: `?tripId=${trip.id}` }}
-            className="btn btn-primary btn-sm ml-4"
+            className="px-3 py-2 border border-black bg-green-200 hover:bg-green-300 text-black font-bold rounded-lg shadow-[2px_2px_0_#222] transition-colors"
           >
             New Category
           </Link>
@@ -106,7 +105,7 @@ function TripPageContent({ trip }: { trip: Trip }) {
           deleteTask={deleteTaskHandler}
         />
         {categories.length > 0 ? (
-          <ul className="w-full max-w-2xl space-y-8">
+          <ul className="space-y-6">
             {categories.map((category) => {
               const categoryCompleted = category.tasks.reduce(
                 (isAllComplete, task) => {
@@ -116,21 +115,20 @@ function TripPageContent({ trip }: { trip: Trip }) {
               );
 
               return (
-                <li key={category.id} className="mb-2">
-                  <div className="flex items-center mb-2 mt-2">
+                <li key={category.id}>
+                  <div className="flex items-center justify-between mb-2">
                     <Link
-                      className={
-                        "text-lg font-semibold transition-all duration-150 " +
-                        (categoryCompleted
+                      className={`text-lg font-semibold transition-all duration-150 ${
+                        categoryCompleted
                           ? "line-through text-gray-400"
-                          : "text-primary")
-                      }
+                          : "text-black"
+                      }`}
                       to={`/category/${category.id}`}
                     >
                       {category.name}
                     </Link>
                     <button
-                      className="btn btn-outline btn-sm ml-6"
+                      className="px-3 py-1 border border-black bg-white hover:bg-gray-50 text-black font-bold rounded shadow-[2px_2px_0_#222]"
                       onClick={() => {
                         setShowAddTaskModal({
                           show: true,
@@ -141,14 +139,16 @@ function TripPageContent({ trip }: { trip: Trip }) {
                       +
                     </button>
                   </div>
-                  <ul className="list bg-base-100 rounded-box shadow-md divide-y divide-base-200">
+                  <ul className="bg-white rounded-lg border border-black shadow-[2px_2px_0_#222] divide-y divide-gray-200">
                     {category.tasks
                       .slice(0, maxGlanceTaskLength)
                       .map((task) => (
                         <li
                           key={task.id}
-                          className={`list-row px-4 py-2 flex items-center ${
-                            task.complete ? "line-through text-gray-400" : ""
+                          className={`px-4 py-3 ${
+                            task.complete
+                              ? "line-through text-gray-400"
+                              : "text-black"
                           }`}
                         >
                           <TaskItem
@@ -163,7 +163,7 @@ function TripPageContent({ trip }: { trip: Trip }) {
                         </li>
                       ))}
                     {category.tasks.length > maxGlanceTaskLength ? (
-                      <li className="list-row px-4 py-2 text-sm text-gray-500">
+                      <li className="px-4 py-2 text-sm text-gray-500">
                         {category.tasks.length - maxGlanceTaskLength} more tasks
                         in this category
                       </li>
@@ -174,7 +174,7 @@ function TripPageContent({ trip }: { trip: Trip }) {
             })}
           </ul>
         ) : (
-          "No Categories"
+          <div className="text-gray-600">No Categories</div>
         )}
       </div>
     </main>
