@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { useNavigate, useLocation } from "react-router";
 
 import { useCreateCategory } from "../apiClient/categories";
-import { useGetAllTrips } from "../apiClient/trips";
+import { useGetTrip } from "../apiClient/trips";
 
 import { PageContent } from "../components/PageContent";
 
@@ -28,9 +28,14 @@ export default function CreateCategory() {
     description: "",
     tripId: defaultTripId,
   });
-  const { data, isLoading, error } = useGetAllTrips();
 
-  if (isLoading) {
+  if (defaultTripId === null) {
+    return "No trip selected";
+  }
+
+  const { data, isLoading, error } = useGetTrip(defaultTripId);
+
+  if (isLoading || data === undefined) {
     return "Loading";
   }
 
@@ -38,7 +43,7 @@ export default function CreateCategory() {
     return "Error";
   }
 
-  const trips = data.trips;
+  const trip = data.trip;
 
   const handleOnSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -51,11 +56,11 @@ export default function CreateCategory() {
       {
         name: formData.name,
         description: formData.description,
-        tripId: formData.tripId,
+        tripId: trip.id,
       },
       {
         onSuccess: () => {
-          navigate(`/trips/${formData?.tripId}`);
+          navigate(`/trips/${trip.id}`);
         },
       }
     );
@@ -73,6 +78,9 @@ export default function CreateCategory() {
     <PageContent>
       <form onSubmit={handleOnSubmit} className="space-y-4">
         <h2 className="page-title">Create Category</h2>
+        <label className="input-label" htmlFor="tripSelect">
+          Trip: {trip.name}
+        </label>
         <div>
           <label className="input-label" htmlFor="categoryName">
             Name
@@ -87,28 +95,6 @@ export default function CreateCategory() {
             onChange={handleFormChange}
             value={formData.name}
           />
-        </div>
-        <div>
-          <label className="input-label" htmlFor="tripSelect">
-            Trip
-          </label>
-          <select
-            id="tripSelect"
-            name="tripId"
-            className="input-field"
-            value={formData.tripId != null ? formData.tripId : ""}
-            required
-            onChange={handleFormChange}
-          >
-            <option value="" disabled>
-              Select a trip
-            </option>
-            {trips.map((trip: Trip) => (
-              <option key={trip.id} value={trip.id}>
-                {trip.name}
-              </option>
-            ))}
-          </select>
         </div>
         <div>
           <label className="input-label" htmlFor="categoryDesc">
