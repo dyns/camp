@@ -31,25 +31,11 @@ export function Modal({
   ref,
   dialogHTMLID,
   children,
-}: // setShowModal,
-// showModal,
-// addTaskToCategory,
-{
+}: {
   ref: RefObject<HTMLDialogElement | null>;
   dialogHTMLID: string;
   children: React.ReactNode;
-  // setShowModal: Dispatch<SetStateAction<ModalData<T>>>;
-  // showModal: ModalData<T>;
-  // addTaskToCategory: (categoryId: string, task: string) => void;
 }) {
-  // const [todoText, setTodoText] = useState("test");
-
-  // useEffect(() => {
-  //   if (showModal) {
-  //     setTodoText("");
-  //   }
-  // }, [showModal]);
-
   useLayoutEffect(() => {
     const removeEscapeListener = (event: any) => {
       event.preventDefault();
@@ -62,46 +48,9 @@ export function Modal({
   }, []);
 
   return (
-    <dialog id={dialogHTMLID} className="modal" ref={ref}>
-      <div className="modal-box">
+    <dialog id={dialogHTMLID} ref={ref} className="modal">
+      <div className="w-[90vw] max-w-md bg-white border border-black rounded-lg shadow-[2px_2px_0_#222] p-6">
         {children}
-        {/* <h3 className="font-bold text-lg">Add a task</h3>
-        <p className="py-4">
-          <input
-            type="text"
-            placeholder="what else?"
-            className="input"
-            value={todoText}
-            onChange={(event) => {
-              setTodoText(event.target.value);
-            }}
-          />
-        </p>
-        <div className="modal-action">
-          <button
-            className="btn btn-outline btn-secondary"
-            onClick={() => {
-              setShowModal({ show: false, data: null });
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            className="btn btn-soft btn-primary ml-4"
-            onClick={() => {
-              // add new todo
-              const trimmed = todoText.trim();
-              setTodoText(trimmed);
-
-              if (trimmed) {
-                addTaskToCategory(showModal.data as string, todoText);
-                setShowModal({ show: false, data: null });
-              }
-            }}
-          >
-            Primary
-          </button>
-        </div> */}
       </div>
     </dialog>
   );

@@ -75,7 +75,7 @@ export function EditTaskModal({
         <p className="py-4 flex items-center gap-4">
           <input
             type="checkbox"
-            className="checkbox checkbox-primary"
+            className="green-checkbox"
             checked={isComplete}
             onChange={() => setIsComplete((v) => !v)}
           />
@@ -108,7 +108,7 @@ export function EditTaskModal({
               >
                 <span className="mb-2">Are you sure?</span>
                 <button
-                  className="btn btn-info text-white"
+                  className="btn btn-info text-white mb-2"
                   onClick={() => {
                     setShowDeleteTooltip(false);
                   }}
@@ -142,7 +142,7 @@ export function EditTaskModal({
             Cancel
           </button>
           <button
-            className="btn btn-soft btn-primary ml-4"
+            className="green-button"
             onClick={handleUpdate}
             disabled={isEmpty}
           >

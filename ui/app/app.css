@@ -10,10 +10,17 @@
 
 html,
 body {
-  /* @apply bg-white; */
   /* background-image: url("../public/mountain_background.jpeg"); */
   background-image: url("../public/mountains.svg");
   background-repeat: no-repeat;
-  background-position: center bottom;
+  background-position: center top;
   background-size: cover;
+}
+
+.green-checkbox {
+  @apply h-5 w-5 accent-green-600 cursor-pointer border border-black rounded;
+}
+
+.green-button {
+  @apply px-3 py-2 border border-black bg-green-200 hover:bg-green-300 text-black font-bold rounded-lg shadow-[2px_2px_0_#222] transition-colors;
 }

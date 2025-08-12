@@ -70,23 +70,20 @@ function TripPageContent({ trip }: { trip: Trip }) {
 
   return (
     <main className="min-h-screen">
-      <div className="max-w-2xl mx-auto p-4 bg-white">
+      <div className="max-w-2xl mx-auto p-4 bg-white mt-4 rounded-lg shadow-[2px_2px_0_#222]">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-extrabold text-black mb-4">
             {trip.name}
           </h1>
-          <Link
-            to={`/trip-settings/${trip.id}`}
-            className="px-3 py-2 border border-black bg-green-200 hover:bg-green-300 text-black font-bold rounded-lg shadow-[2px_2px_0_#222] transition-colors"
-          >
+          <Link to={`/trip-settings/${trip.id}`} className="green-button">
             Trip Preferences
           </Link>
         </div>
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-xl font-semibold text-black">Categories</h2>
+          <h2 className="text-xl font-semibold text-black">Task Categories:</h2>
           <Link
             to={{ pathname: "/create-category", search: `?tripId=${trip.id}` }}
-            className="px-3 py-2 border border-black bg-green-200 hover:bg-green-300 text-black font-bold rounded-lg shadow-[2px_2px_0_#222] transition-colors"
+            className="green-button"
           >
             New Category
           </Link>
