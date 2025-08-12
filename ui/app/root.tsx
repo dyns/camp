@@ -18,6 +18,10 @@ import { GitHubLogo, CampLogo } from "./components/Logos";
 import type { Route } from "./+types/root";
 import "./app.css";
 
+export function meta({}: Route.MetaArgs) {
+  return [{ title: "Camp" }];
+}
+
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -74,7 +78,7 @@ function AppHeader({ children }: { children: React.ReactNode }) {
         <CampLogo />
       </div>
       <div>
-        <Link to="/trips" className="btn btn-primary btn-sm ml-4">
+        <Link to="/trips" className="green-button btn-sm ml-4 mr-4">
           View all Trips
         </Link>
         <Link

@@ -73,15 +73,12 @@ function LoginFormFields({
   onSubmit,
 }: LoginFormFieldsProps) {
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className="space-y-4">
       <h2 className="text-4xl font-extrabold text-left mb-6 leading-tight text-black">
         Sign In
       </h2>
       <div>
-        <label
-          className="block mb-1 font-bold text-black text-lg"
-          htmlFor="email"
-        >
+        <label className="input-label" htmlFor="email">
           Email
         </label>
         <input
@@ -96,10 +93,7 @@ function LoginFormFields({
         />
       </div>
       <div>
-        <label
-          className="block mb-1 font-bold text-black text-lg"
-          htmlFor="password"
-        >
+        <label className="input-label" htmlFor="password">
           Password
         </label>
         <input

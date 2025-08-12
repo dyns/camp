@@ -7,6 +7,7 @@ import { useUpdateCategory } from "../apiClient/categories";
 import { useModal } from "../components/modal";
 import { EditTaskModal } from "../components/EditTaskModal";
 import { AddTaskModal } from "../components/AddTaskModal";
+import { PageContent } from "../components/PageContent";
 import type { Category, Task } from "~/types";
 
 import type { UseMutationResult } from "@tanstack/react-query";
@@ -123,7 +124,7 @@ export function CategoryContent({ category }: { category: Category }) {
               });
             }
           }}
-          className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
+          className="green-button"
         >
           Save
         </button>
@@ -147,7 +148,7 @@ export function CategoryContent({ category }: { category: Category }) {
             ) : (
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <span>{category.name}</span>
+                  <span className="page-title">{category.name}</span>
                 </div>
                 <button
                   className="ml-2 text-blue-500 hover:text-blue-700"
@@ -234,7 +235,7 @@ export function CategoryContent({ category }: { category: Category }) {
           type="checkbox"
           checked={task.complete}
           readOnly
-          className="checkbox checkbox-success"
+          className="green-checkbox"
           title={task.complete ? "Completed" : "Uncompleted"}
         />
       </div>
@@ -242,7 +243,7 @@ export function CategoryContent({ category }: { category: Category }) {
   };
 
   return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center py-8">
+    <PageContent>
       <EditTaskModal
         modalRef={editTaskModalRef}
         showModal={showEditTaskModal}
@@ -256,7 +257,7 @@ export function CategoryContent({ category }: { category: Category }) {
         showModal={showAddTaskModal}
         setShowModal={setShowAddTaskModal}
       />
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-xl p-8 relative">
+      <div className="w-full relative">
         {/* Trip name floating above title */}
         <div className="absolute -top-6 left-4 bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-semibold shadow">
           <Link to={`/trips/${category.trip.id}`}>
@@ -268,10 +269,10 @@ export function CategoryContent({ category }: { category: Category }) {
         </div>
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xl font-semibold text-gray-700">Tasks</h2>
+            <h2 className="page-subtitle">Uncompleted Tasks:</h2>
             <button
               type="button"
-              className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow ml-2"
+              className="green-button"
               style={{ minWidth: "80px" }}
               onClick={() => {
                 setShowAddTaskModal({
@@ -283,32 +284,26 @@ export function CategoryContent({ category }: { category: Category }) {
               Add
             </button>
           </div>
-          <div className="bg-gray-50 rounded-lg border border-gray-200">
-            <ul className="divide-y divide-gray-200">
-              {category.uncompletedTasks.map((task: Task) => (
-                <li key={task.id} className="px-4 py-3 flex items-center">
-                  {/* <span className="text-gray-800">{task.name}</span> */}
-                  <TaskRow task={task} completeToggled={updateTaskCompletion} />
-                </li>
-              ))}
-            </ul>
-          </div>
+          <ul className="list-container">
+            {category.uncompletedTasks.map((task: Task) => (
+              <li key={task.id} className="flex items-center">
+                {/* <span className="text-gray-800">{task.name}</span> */}
+                <TaskRow task={task} completeToggled={updateTaskCompletion} />
+              </li>
+            ))}
+          </ul>
 
-          <h2 className="text-xl font-semibold mb-2 text-gray-700 mt-4">
-            Completed Tasks
-          </h2>
-          <div className="bg-gray-50 rounded-lg border border-gray-200">
-            <ul className="divide-y divide-gray-200">
-              {category.completedTasks.map((task: Task) => (
-                <li key={task.id} className="px-4 py-3 flex items-center">
-                  {/* <span className="text-gray-800">{task.name}</span> */}
-                  <TaskRow task={task} completeToggled={updateTaskCompletion} />
-                </li>
-              ))}
-            </ul>
-          </div>
+          <h2 className="page-subtitle mb-2 mt-4">Completed Tasks:</h2>
+          <ul className="list-container">
+            {category.completedTasks.map((task: Task) => (
+              <li key={task.id} className="flex items-center">
+                {/* <span className="text-gray-800">{task.name}</span> */}
+                <TaskRow task={task} completeToggled={updateTaskCompletion} />
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
-    </div>
+    </PageContent>
   );
 }

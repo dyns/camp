@@ -6,6 +6,7 @@ import { TaskItem } from "../components/task";
 import { Modal, useModal } from "../components/modal";
 import { EditTaskModal } from "../components/EditTaskModal";
 import { AddTaskModal } from "../components/AddTaskModal";
+import { PageContent } from "../components/PageContent";
 
 import type { Task, Trip } from "~/types";
 
@@ -70,17 +71,15 @@ function TripPageContent({ trip }: { trip: Trip }) {
 
   return (
     <main className="min-h-screen">
-      <div className="max-w-2xl mx-auto p-4 bg-white mt-4 rounded-lg shadow-[2px_2px_0_#222]">
+      <PageContent>
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-3xl font-extrabold text-black mb-4">
-            {trip.name}
-          </h1>
+          <h1 className="page-title">{trip.name}</h1>
           <Link to={`/trip-settings/${trip.id}`} className="green-button">
             Trip Preferences
           </Link>
         </div>
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-xl font-semibold text-black">Task Categories:</h2>
+          <h2 className="page-subtitle">Task Categories:</h2>
           <Link
             to={{ pathname: "/create-category", search: `?tripId=${trip.id}` }}
             className="green-button"
@@ -115,17 +114,13 @@ function TripPageContent({ trip }: { trip: Trip }) {
                 <li key={category.id}>
                   <div className="flex items-center justify-between mb-2">
                     <Link
-                      className={`text-lg font-semibold transition-all duration-150 ${
-                        categoryCompleted
-                          ? "line-through text-gray-400"
-                          : "text-black"
-                      }`}
+                      className="white-button"
                       to={`/category/${category.id}`}
                     >
                       {category.name}
                     </Link>
                     <button
-                      className="px-3 py-1 border border-black bg-white hover:bg-gray-50 text-black font-bold rounded shadow-[2px_2px_0_#222]"
+                      className="white-button"
                       onClick={() => {
                         setShowAddTaskModal({
                           show: true,
@@ -133,10 +128,10 @@ function TripPageContent({ trip }: { trip: Trip }) {
                         });
                       }}
                     >
-                      +
+                      Add Task
                     </button>
                   </div>
-                  <ul className="bg-white rounded-lg border border-black shadow-[2px_2px_0_#222] divide-y divide-gray-200">
+                  <ul className="list-container">
                     {category.tasks
                       .slice(0, maxGlanceTaskLength)
                       .map((task) => (
@@ -173,7 +168,7 @@ function TripPageContent({ trip }: { trip: Trip }) {
         ) : (
           <div className="text-gray-600">No Categories</div>
         )}
-      </div>
+      </PageContent>
     </main>
   );
 }

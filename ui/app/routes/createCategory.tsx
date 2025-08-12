@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from "react-router";
 import { useCreateCategory } from "../apiClient/categories";
 import { useGetAllTrips } from "../apiClient/trips";
 
+import { PageContent } from "../components/PageContent";
+
 import type { Trip } from "../types";
 
 type CategoryData = {
@@ -68,14 +70,11 @@ export default function CreateCategory() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-base-200">
-      <form
-        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md space-y-6"
-        onSubmit={handleOnSubmit}
-      >
-        <h2 className="text-2xl font-bold text-center mb-4">Create Category</h2>
+    <PageContent>
+      <form onSubmit={handleOnSubmit} className="space-y-4">
+        <h2 className="page-title">Create Category</h2>
         <div>
-          <label className="block mb-1 font-semibold" htmlFor="categoryName">
+          <label className="input-label" htmlFor="categoryName">
             Name
           </label>
           <input
@@ -83,20 +82,20 @@ export default function CreateCategory() {
             name="name"
             type="text"
             required
-            className="input input-bordered w-full"
+            className="input-field"
             placeholder="Enter category name"
             onChange={handleFormChange}
             value={formData.name}
           />
         </div>
         <div>
-          <label className="block mb-1 font-semibold" htmlFor="tripSelect">
+          <label className="input-label" htmlFor="tripSelect">
             Trip
           </label>
           <select
             id="tripSelect"
             name="tripId"
-            className="select select-bordered w-full"
+            className="input-field"
             value={formData.tripId != null ? formData.tripId : ""}
             required
             onChange={handleFormChange}
@@ -112,7 +111,7 @@ export default function CreateCategory() {
           </select>
         </div>
         <div>
-          <label className="block mb-1 font-semibold" htmlFor="categoryDesc">
+          <label className="input-label" htmlFor="categoryDesc">
             Description
           </label>
           <textarea
@@ -120,28 +119,17 @@ export default function CreateCategory() {
             name="description"
             rows={4}
             required={false}
-            className="textarea textarea-bordered w-full"
+            className="input-field"
             placeholder="Describe this category..."
             onChange={handleFormChange}
             value={formData.description}
           />
         </div>
-        {/* <div>
-          <label className="block mb-1 font-semibold" htmlFor="categoryImg">
-            Image (optional)
-          </label>
-          <input
-            id="categoryImg"
-            name="categoryImg"
-            type="file"
-            accept="image/*"
-            className="file-input file-input-bordered w-full"
-          />
-        </div> */}
-        <button type="submit" className="btn btn-primary w-full mt-4">
+
+        <button type="submit" className="green-button">
           Create Category
         </button>
       </form>
-    </div>
+    </PageContent>
   );
 }

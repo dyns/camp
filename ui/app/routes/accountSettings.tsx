@@ -6,7 +6,7 @@ import {
   useCurrentUser,
   signOut,
 } from "../apiClient/user";
-
+import { PageContent } from "../components/PageContent";
 import { queryClient } from "../apiClient/clientUtils";
 
 export default function AccountSettingsData() {
@@ -31,22 +31,29 @@ export default function AccountSettingsData() {
   };
 
   return (
-    <div
-      style={{ flexDirection: "column" }}
-      className="flex items-center justify-center min-h-screen bg-base-200"
-    >
-      <AccountSettings user={data.user} />
-      <button
-        className="btn btn-outline btn-error w-full max-w-md mt-6 shadow"
-        onClick={handleSignOut}
+    <PageContent>
+      <div
+        style={{ flexDirection: "column" }}
+        className="flex justify-center items-start"
       >
-        Sign Out
-      </button>
-    </div>
+        <AccountSettings user={data.user} />
+        <button
+          className="btn btn-outline btn-error mt-6 shadow"
+          onClick={handleSignOut}
+        >
+          Sign Out
+        </button>
+      </div>
+    </PageContent>
   );
 }
 
 function AccountSettings({ user }: { user: any }) {
+  const [updateStatus, setUpdateStatus] = useState<{
+    status: "idle" | "loading" | "success" | "error";
+    message: string;
+  }>({ status: "idle", message: "" });
+
   const [formData, setFormData] = useState<{
     name: string;
     email: string;
@@ -64,7 +71,7 @@ function AccountSettings({ user }: { user: any }) {
 
   return (
     <form
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
 
         const name = formData.name.trim();
@@ -74,17 +81,29 @@ function AccountSettings({ user }: { user: any }) {
         setFormData({ name, email, confirmEmail });
 
         if (name && (!emailChanged || email === confirmEmail)) {
-          updateCurrentUser.mutate({
-            name: formData.name,
-            email: formData.email,
-          });
+          try {
+            await updateCurrentUser.mutateAsync({
+              name: formData.name,
+              email: formData.email,
+            });
+
+            setUpdateStatus({
+              status: "success",
+              message: "Updated successfully",
+            });
+          } catch (error) {
+            setUpdateStatus({
+              status: "error",
+              message: "Error updating account",
+            });
+          }
         }
       }}
-      className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md space-y-6"
+      className="w-full space-y-6"
     >
-      <h2 className="text-2xl font-bold text-center mb-4">Account Settings</h2>
+      <h2 className="page-title">Account Settings</h2>
       <div>
-        <label className="block mb-1 font-semibold" htmlFor="nickname">
+        <label className="input-label" htmlFor="nickname">
           Nickname
         </label>
         <input
@@ -92,7 +111,7 @@ function AccountSettings({ user }: { user: any }) {
           name="nickname"
           type="text"
           required
-          className="input input-bordered w-full"
+          className="input-field"
           placeholder="Enter your nickname"
           value={formData.name}
           onChange={(e) => {
@@ -103,7 +122,7 @@ function AccountSettings({ user }: { user: any }) {
         />
       </div>
       <div>
-        <label className="block mb-1 font-semibold" htmlFor="email">
+        <label className="input-label" htmlFor="email">
           Email
         </label>
         <input
@@ -111,7 +130,7 @@ function AccountSettings({ user }: { user: any }) {
           name="email"
           type="email"
           required
-          className="input input-bordered w-full"
+          className="input-field"
           placeholder="Enter your email"
           value={formData.email}
           onChange={(e) => {
@@ -124,7 +143,7 @@ function AccountSettings({ user }: { user: any }) {
 
       {emailChanged ? (
         <div>
-          <label className="block mb-1 font-semibold" htmlFor="email">
+          <label className="input-label" htmlFor="email">
             Confirm Email
           </label>
           <input
@@ -132,7 +151,7 @@ function AccountSettings({ user }: { user: any }) {
             name="confirm-email"
             type="email"
             required
-            className="input input-bordered w-full"
+            className="input-field"
             placeholder="Re-enter your email"
             value={formData.confirmEmail}
             onChange={(e) => {
@@ -147,12 +166,26 @@ function AccountSettings({ user }: { user: any }) {
       <button
         disabled={emailNotConfirmed}
         type="submit"
-        className="btn btn-primary w-full mt-4"
+        className="green-button"
       >
         Update Account
       </button>
 
-      <span>{emailNotConfirmed ? "Emails must match" : null}</span>
+      {updateStatus.status === "success" || updateStatus.status === "error" ? (
+        <span
+          className={`ml-2 ${
+            updateStatus.status === "success"
+              ? "text-green-500"
+              : "text-red-500"
+          }`}
+        >
+          {updateStatus.message}
+        </span>
+      ) : null}
+
+      <span className="ml-2">
+        {emailNotConfirmed ? "Emails must match" : null}
+      </span>
     </form>
   );
 }

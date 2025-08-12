@@ -71,8 +71,10 @@ export function EditTaskModal({
   return (
     <Modal ref={modalRef} dialogHTMLID="edit-task-modal">
       <div className="relative">
-        <h3 className="font-bold text-lg">Edit Task</h3>
-        <p className="py-4 flex items-center gap-4">
+        <h3 className="text-2xl font-extrabold text-left mb-4 leading-tight text-black">
+          Edit Task
+        </h3>
+        <div className="py-4 flex items-center gap-4">
           <input
             type="checkbox"
             className="green-checkbox"
@@ -82,20 +84,21 @@ export function EditTaskModal({
           <input
             type="text"
             placeholder="What's next?"
-            className={`input w-full ${
-              isEmpty ? "input-error border-red-500" : ""
-            }`}
+            className={`w-full px-4 py-3 border ${
+              isEmpty ? "border-red-500" : "border-black"
+            } bg-white text-black text-base rounded-lg shadow-[2px_2px_0_#222]`}
             value={editText}
             onChange={(e) => {
               setEditText(e.target.value);
             }}
           />
-        </p>
-        <div className="modal-action flex items-right">
+        </div>
+        <div className="mt-2 flex items-center gap-3">
           <div style={{ flexGrow: 1 }}>
             <button
               disabled={showDeleteTooltip}
-              className="btn btn-ghost text-xl"
+              id="trash-btn"
+              className="px-3 py-2 border border-black bg-white text-black rounded-lg shadow-[2px_2px_0_#222] text-xl"
               onClick={() => setShowDeleteTooltip((v) => !v)}
               aria-label="Delete task"
             >
@@ -104,11 +107,11 @@ export function EditTaskModal({
             {showDeleteTooltip && (
               <div
                 id="delete-tooltip"
-                className="absolute left-10 bottom-0 z-10 bg-base-100 p-4 rounded shadow flex flex-col items-start border border-base-200"
+                className="absolute left-10 bottom-0 z-10 bg-white p-4 rounded-lg shadow-[2px_2px_0_#222] flex flex-col items-start border border-black"
               >
                 <span className="mb-2">Are you sure?</span>
                 <button
-                  className="btn btn-info text-white mb-2"
+                  className="px-3 py-2 border border-black bg-white text-black font-bold rounded-lg shadow-[2px_2px_0_#222] mb-2"
                   onClick={() => {
                     setShowDeleteTooltip(false);
                   }}
@@ -117,7 +120,7 @@ export function EditTaskModal({
                 </button>
 
                 <button
-                  className="btn btn-error text-white"
+                  className="px-3 py-2 border border-black bg-red-200 hover:bg-red-300 text-black font-bold rounded-lg shadow-[2px_2px_0_#222]"
                   onClick={() => {
                     if (showModal.data) {
                       deleteTask(showModal.data.id);
@@ -133,10 +136,10 @@ export function EditTaskModal({
           </div>
 
           {isEmpty && (
-            <span className="text-error mr-4">Task must have some text</span>
+            <span className="text-red-600 mr-2">Task must have some text</span>
           )}
           <button
-            className="btn btn-outline btn-secondary"
+            className="px-3 py-2 border border-black bg-white text-black font-bold rounded-lg shadow-[2px_2px_0_#222]"
             onClick={() => setShowModal({ show: false, data: null })}
           >
             Cancel

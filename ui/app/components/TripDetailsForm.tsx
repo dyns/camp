@@ -230,15 +230,7 @@ export function TripDetailsForm({
         </ul>
       </div>
       {saveStatus}
-      <button
-        type="submit"
-        className="px-6 py-2 border border-black bg-gray-200 text-black font-bold font-mono mt-4 hover:bg-gray-300 active:bg-gray-400 active:translate-x-0.5 active:translate-y-0.5"
-        style={{
-          boxShadow: "2px 2px 0 #222",
-          borderRadius: "0.25rem",
-          transition: "background 0.1s, transform 0.1s",
-        }}
-      >
+      <button type="submit" className="green-button">
         Save Trip Settings
       </button>
     </form>

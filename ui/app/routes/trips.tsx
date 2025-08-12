@@ -3,14 +3,16 @@ import { Link } from "react-router";
 
 import type { Trip } from "../types";
 
+import { PageContent } from "../components/PageContent";
+
 export default function Trips() {
   const { isPending, isError, data, error } = useGetAllTrips();
   const trips: Trip[] = data?.trips || [];
 
   return (
-    <div className="max-w-2xl mx-auto min-h-screen p-4">
+    <PageContent>
       <div className="flex items-center justify-between mb-6">
-        <span className="text-3xl font-extrabold text-black">Your Trips</span>
+        <span className="page-title">Your Trips</span>
         <Link
           to={"/create-trip"}
           className="px-4 py-2 border border-black bg-green-200 hover:bg-green-300 text-black font-bold rounded-lg shadow-[2px_2px_0_#222] transition-colors"
@@ -46,6 +48,6 @@ export default function Trips() {
           );
         })}
       </ul>
-    </div>
+    </PageContent>
   );
 }
